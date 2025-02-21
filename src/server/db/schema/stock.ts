@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { createTable } from "./schema";
+import { createTable } from "../schema";
 import { varchar, numeric, integer, timestamp } from "drizzle-orm/pg-core";
 import { part_catalogue } from "./part_catalogue";
 import { supplier } from "./supplier"; 

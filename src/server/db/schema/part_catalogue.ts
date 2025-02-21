@@ -1,9 +1,11 @@
 import { randomUUID } from "crypto";
-import { createTable } from "./schema";
-import { timestamp, varchar} from "drizzle-orm/pg-core";
-import { part_category } from "./part_category";
+import { createTable } from "../schema";
+import { varchar} from "drizzle-orm/pg-core";
+import { part_category} from "./part_category";
 import { car_brand } from "./car_brand";
 import { relations } from "drizzle-orm";
+import { creator_updater } from "./columns/create_update.helper";
+import { timestamps } from "./columns/timestamp.helper";
 
 export const part_catalogue =  createTable("part_catalogue",{
     id:varchar("id",{length:255}).notNull().primaryKey().$defaultFn(()=>randomUUID()),
@@ -11,8 +13,8 @@ export const part_catalogue =  createTable("part_catalogue",{
     part_number: varchar("part_number",{length:255}).notNull(),
     category_id: varchar("category_id").notNull().references(()=> part_category.id,{ onDelete: "restrict"}),
     brand_id: varchar("brand_id").notNull().references(()=>car_brand.id,{onDelete:"restrict"}),
-    created_at: timestamp("created_at").defaultNow(),
-    updated_at: timestamp("updated_at").$onUpdate(()=>new Date)
+    ...timestamps,
+    ...creator_updater
 })
 
 export const part_catalogue_relations = relations(part_catalogue,({one}) => ({

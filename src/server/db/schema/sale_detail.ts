@@ -1,9 +1,11 @@
 import { randomUUID } from "crypto";
-import { createTable } from "./schema";
-import { varchar, timestamp, integer, numeric } from "drizzle-orm/pg-core";
+import { createTable } from "../schema";
+import { varchar,integer, numeric } from "drizzle-orm/pg-core";
 import { stock_sale } from "./sale";
 import { part_catalogue } from "./part_catalogue";
 import { relations } from "drizzle-orm";
+import { creator_updater } from "./columns/create_update.helper";
+import { timestamps } from "./columns/timestamp.helper";
 
 export const stock_sale_detail = createTable("stock_sale_detail", {
   id: varchar("id", { length: 255 }).notNull().primaryKey().$defaultFn(() => randomUUID()),
@@ -11,8 +13,8 @@ export const stock_sale_detail = createTable("stock_sale_detail", {
   part_id: varchar("part_id").references(() => part_catalogue.id, { onDelete: "no action", onUpdate: "no action" }),
   quantity: integer("quantity").notNull(),
   sub_total: numeric("sub_total", { precision: 10, scale: 2 }).notNull(),
-  created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").$onUpdate(() => new Date()),
+  ...timestamps,
+  ...creator_updater
 });
 
 export const stock_sale_detail_relations = relations(stock_sale_detail, ({ one }) => ({

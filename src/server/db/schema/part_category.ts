@@ -1,8 +1,10 @@
-import { timestamp, varchar } from "drizzle-orm/pg-core";
-import { createTable } from "./schema";
+import {varchar } from "drizzle-orm/pg-core";
+import { createTable } from "../schema";
 import { randomUUID } from "crypto";
 import { relations } from "drizzle-orm";
 import { part_catalogue } from "./part_catalogue";
+import { timestamps } from "./columns/timestamp.helper";
+import { creator_updater } from "./columns/create_update.helper";
 
 
 export const part_category = createTable("part_category",{
@@ -11,8 +13,8 @@ export const part_category = createTable("part_category",{
     category_name: varchar("category_name",{length:255}).notNull(),
     category_desc : varchar("category_desc",{length:255}).notNull(),
     unit: varchar("unit",{length:255}).notNull(),
-    created_at: timestamp("created_at").defaultNow(),
-    updated_at: timestamp("updated_at").$onUpdate(()=>new Date)
+    ...timestamps,
+    ...creator_updater
 })
 
 export const part_category_relations = relations(part_category,({ many }) => ({
