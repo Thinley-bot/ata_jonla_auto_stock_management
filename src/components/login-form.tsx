@@ -12,6 +12,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { authClient } from "~/lib/auth-client"
 import { Checkbox } from "./ui/checkbox"
+import toast from "react-hot-toast"
 
 
 export function LoginForm({className,...props}: React.ComponentPropsWithoutRef<"div">) {
@@ -26,16 +27,24 @@ export function LoginForm({className,...props}: React.ComponentPropsWithoutRef<"
   })
 
   async function onSubmit(payload: z.infer<typeof loginSchema>) {
-    const response =  await authClient.signIn.email({
-         email: payload.email,
-         password: payload.password,
-         rememberMe:payload.rememberMe,
-         callbackURL: "/dashboard",
-       }
-     );
-     console.log(response)
-   }
-
+    try {
+      const response = await authClient.signIn.email({
+        email: payload.email,
+        password: payload.password,
+        rememberMe: payload.rememberMe,
+        callbackURL: "/dashboard",
+      });
+      if (!response.data) {
+        toast.error(response?.error?.message || "An error occurred");
+        return;
+      }
+      toast.success("Login successful!");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Something went wrong";
+      toast.error(errorMessage);
+    }
+  }
+    
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -96,9 +105,6 @@ export function LoginForm({className,...props}: React.ComponentPropsWithoutRef<"
               />
               <Button type="submit" className="w-full">
                 Login
-              </Button>
-              <Button variant="outline" className="w-full">
-                Login with Google
               </Button>
               <div className="mt-4 text-center text-sm">
                 Don&apos;t have an account?{" "}

@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { registerSchema } from "~/form_schema/register"
 import { useState } from "react"
 import { authClient } from "~/lib/auth-client"
+import toast from "react-hot-toast"
 
 export function RegisterForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
   const [loading, setLoading] = useState(false)
@@ -25,20 +26,25 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
   })
 
   const onSubmit = async (payload: z.infer<typeof registerSchema>) => {
-    console.log("hitbfjfdjb")
     setLoading(true)
     try {
-      const { data, error} = await authClient.signUp.email({
+      const signUpResponse= await authClient.signUp.email({
         email: payload.email,
         password: payload.password,
        name: payload.name,
         callbackURL: "/",
       })
+      if(!signUpResponse.data){
+        toast.error(signUpResponse?.error?.message || "An error occurred")
+        return
+      }
+      toast.success("User Registration Successful")
     } catch (error) {
-      console.error("Sign-in error:", error)
-      form.setError("email", { type: "manual", message: "Something went wrong. Please try again." })
+      const errorMessage = error instanceof Error ? error.message : "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setLoading(false)
+      form.reset()
     }
   }
 
@@ -99,7 +105,7 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
                 {loading ? "Registering..." : "Register"}
               </Button>
               <div className="mt-4 text-center text-sm">
-                Already have an account? <a href="#" className="underline underline-offset-4">Sign in</a>
+                Already have an account? <a href="/" className="underline underline-offset-4">Sign in</a>
               </div>
             </form>
           </Form>

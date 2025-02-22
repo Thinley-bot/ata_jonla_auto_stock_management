@@ -1,6 +1,6 @@
 import { relations} from "drizzle-orm";
 import { createTable } from "../schema";
-import { AnyPgColumn, boolean, text, varchar } from "drizzle-orm/pg-core";
+import { boolean, text, varchar } from "drizzle-orm/pg-core";
 import { user_role } from "./user_role";
 import { randomUUID } from "crypto";
 import { accounts } from "./account";
@@ -18,13 +18,10 @@ import { unit_price } from "./unit_price";
 export const users = createTable("user", {
   id: varchar("id", { length: 255 }).notNull().primaryKey().$defaultFn(() => randomUUID()),
   name: varchar("name", { length: 255 }),
-  password : varchar('password'),
   email : varchar('email').notNull(),
   emailVerified : boolean("email_verified"),
   image: text('image'),
   role_id: varchar("roleId").references(() => user_role.id,{ onDelete: "set null", onUpdate: "set null" }).$default(()=>"1"),
-  createdBy: varchar('created_by', { length: 255 }).notNull().references(():AnyPgColumn => users.id).$default(()=>"system"),
-  updatedBy: varchar('updated_by', { length: 255 }).references(():AnyPgColumn => users.id),
   ...timestamps,
 });
 
