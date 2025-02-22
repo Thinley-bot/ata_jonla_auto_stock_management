@@ -7,4 +7,8 @@
 <p>Redux for global state management</p>
 <p>React hot toaster</p>
 <p>Postgres db</p>
+<p>Resend for email verification</p>
 <p>Trying to learn RSC</p>
+<p>Trying to learn Assocaiations</p>
+<p>Refering good code bases to understand good practices.</p>
+
