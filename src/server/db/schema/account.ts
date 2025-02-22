@@ -3,7 +3,6 @@ import { createTable } from "../schema";
 import { users } from "./users";
 import { relations } from "drizzle-orm";
 import { timestamps } from "./columns/timestamp.helper";
-import { creator_updater } from "./columns/create_update.helper";
 
 export const accounts = createTable("account", {
     id: text("id").primaryKey(),

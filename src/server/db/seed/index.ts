@@ -1,7 +1,7 @@
-import { partCatalogueSeed } from "./part_catalogue.seed";
+import { Seed } from "./seed";
 
 try {
-    partCatalogueSeed();
+    Seed();
 } catch (err) {
     console.log(err);
     process.exit;

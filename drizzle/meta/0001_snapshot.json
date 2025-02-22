@@ -1,6 +1,6 @@
 {
-  "id": "17189da0-a463-40fc-8f27-850ad6426ed4",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "b0a963e6-0784-496b-bca1-f84c0a5c3064",
+  "prevId": "17189da0-a463-40fc-8f27-850ad6426ed4",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -1027,18 +1027,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "created_by": {
-          "name": "created_by",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "updated_by": {
-          "name": "updated_by",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -1054,34 +1042,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "tbl_user_role_created_by_tbl_user_id_fk": {
-          "name": "tbl_user_role_created_by_tbl_user_id_fk",
-          "tableFrom": "tbl_user_role",
-          "tableTo": "tbl_user",
-          "columnsFrom": [
-            "created_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "tbl_user_role_updated_by_tbl_user_id_fk": {
-          "name": "tbl_user_role_updated_by_tbl_user_id_fk",
-          "tableFrom": "tbl_user_role",
-          "tableTo": "tbl_user",
-          "columnsFrom": [
-            "updated_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
