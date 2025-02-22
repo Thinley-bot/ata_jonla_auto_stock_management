@@ -5,8 +5,22 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1739794129446,
-      "tag": "0000_narrow_shinobi_shaw",
+      "when": 1740136676620,
+      "tag": "0000_new_living_mummy",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1740151804337,
+      "tag": "0001_useful_stranger",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1740152462227,
+      "tag": "0002_smart_jack_power",
       "breakpoints": true
     }
   ]

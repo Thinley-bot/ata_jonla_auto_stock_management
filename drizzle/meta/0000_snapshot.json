@@ -1,11 +1,117 @@
 {
-  "id": "cde2ebd7-c7b2-4f41-9648-d5c961bb23da",
+  "id": "17189da0-a463-40fc-8f27-850ad6426ed4",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.car_brand": {
-      "name": "car_brand",
+    "public.tbl_account": {
+      "name": "tbl_account",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "account_id": {
+          "name": "account_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider_id": {
+          "name": "provider_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "access_token": {
+          "name": "access_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "refresh_token": {
+          "name": "refresh_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_token": {
+          "name": "id_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "access_token_expires_at": {
+          "name": "access_token_expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "refresh_token_expires_at": {
+          "name": "refresh_token_expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "scope": {
+          "name": "scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "tbl_account_user_id_tbl_user_id_fk": {
+          "name": "tbl_account_user_id_tbl_user_id_fk",
+          "tableFrom": "tbl_account",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.tbl_car_brand": {
+      "name": "tbl_car_brand",
       "schema": "",
       "columns": {
         "id": {
@@ -26,11 +132,23 @@
           "primaryKey": false,
           "notNull": true
         },
+        "created_by": {
+          "name": "created_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_by": {
+          "name": "updated_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         },
         "updated_at": {
@@ -41,12 +159,42 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "tbl_car_brand_created_by_tbl_user_id_fk": {
+          "name": "tbl_car_brand_created_by_tbl_user_id_fk",
+          "tableFrom": "tbl_car_brand",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tbl_car_brand_updated_by_tbl_user_id_fk": {
+          "name": "tbl_car_brand_updated_by_tbl_user_id_fk",
+          "tableFrom": "tbl_car_brand",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "updated_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "public.part_catalogue": {
-      "name": "part_catalogue",
+    "public.tbl_part_catalogue": {
+      "name": "tbl_part_catalogue",
       "schema": "",
       "columns": {
         "id": {
@@ -79,11 +227,23 @@
           "primaryKey": false,
           "notNull": true
         },
+        "created_by": {
+          "name": "created_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_by": {
+          "name": "updated_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         },
         "updated_at": {
@@ -95,10 +255,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "part_catalogue_category_id_part_category_id_fk": {
-          "name": "part_catalogue_category_id_part_category_id_fk",
-          "tableFrom": "part_catalogue",
-          "tableTo": "part_category",
+        "tbl_part_catalogue_category_id_tbl_part_category_id_fk": {
+          "name": "tbl_part_catalogue_category_id_tbl_part_category_id_fk",
+          "tableFrom": "tbl_part_catalogue",
+          "tableTo": "tbl_part_category",
           "columnsFrom": [
             "category_id"
           ],
@@ -108,10 +268,10 @@
           "onDelete": "restrict",
           "onUpdate": "no action"
         },
-        "part_catalogue_brand_id_car_brand_id_fk": {
-          "name": "part_catalogue_brand_id_car_brand_id_fk",
-          "tableFrom": "part_catalogue",
-          "tableTo": "car_brand",
+        "tbl_part_catalogue_brand_id_tbl_car_brand_id_fk": {
+          "name": "tbl_part_catalogue_brand_id_tbl_car_brand_id_fk",
+          "tableFrom": "tbl_part_catalogue",
+          "tableTo": "tbl_car_brand",
           "columnsFrom": [
             "brand_id"
           ],
@@ -120,13 +280,42 @@
           ],
           "onDelete": "restrict",
           "onUpdate": "no action"
+        },
+        "tbl_part_catalogue_created_by_tbl_user_id_fk": {
+          "name": "tbl_part_catalogue_created_by_tbl_user_id_fk",
+          "tableFrom": "tbl_part_catalogue",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tbl_part_catalogue_updated_by_tbl_user_id_fk": {
+          "name": "tbl_part_catalogue_updated_by_tbl_user_id_fk",
+          "tableFrom": "tbl_part_catalogue",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "updated_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "public.part_category": {
-      "name": "part_category",
+    "public.tbl_part_category": {
+      "name": "tbl_part_category",
       "schema": "",
       "columns": {
         "id": {
@@ -153,11 +342,23 @@
           "primaryKey": false,
           "notNull": true
         },
+        "created_by": {
+          "name": "created_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_by": {
+          "name": "updated_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         },
         "updated_at": {
@@ -168,12 +369,42 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "tbl_part_category_created_by_tbl_user_id_fk": {
+          "name": "tbl_part_category_created_by_tbl_user_id_fk",
+          "tableFrom": "tbl_part_category",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tbl_part_category_updated_by_tbl_user_id_fk": {
+          "name": "tbl_part_category_updated_by_tbl_user_id_fk",
+          "tableFrom": "tbl_part_category",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "updated_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "public.stock_sale": {
-      "name": "stock_sale",
+    "public.tbl_stock_sale": {
+      "name": "tbl_stock_sale",
       "schema": "",
       "columns": {
         "id": {
@@ -194,11 +425,23 @@
           "primaryKey": false,
           "notNull": true
         },
+        "created_by": {
+          "name": "created_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_by": {
+          "name": "updated_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         },
         "updated_at": {
@@ -209,12 +452,42 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "tbl_stock_sale_created_by_tbl_user_id_fk": {
+          "name": "tbl_stock_sale_created_by_tbl_user_id_fk",
+          "tableFrom": "tbl_stock_sale",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tbl_stock_sale_updated_by_tbl_user_id_fk": {
+          "name": "tbl_stock_sale_updated_by_tbl_user_id_fk",
+          "tableFrom": "tbl_stock_sale",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "updated_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "public.stock_sale_detail": {
-      "name": "stock_sale_detail",
+    "public.tbl_stock_sale_detail": {
+      "name": "tbl_stock_sale_detail",
       "schema": "",
       "columns": {
         "id": {
@@ -247,11 +520,23 @@
           "primaryKey": false,
           "notNull": true
         },
+        "created_by": {
+          "name": "created_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_by": {
+          "name": "updated_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         },
         "updated_at": {
@@ -263,10 +548,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "stock_sale_detail_sale_id_stock_sale_id_fk": {
-          "name": "stock_sale_detail_sale_id_stock_sale_id_fk",
-          "tableFrom": "stock_sale_detail",
-          "tableTo": "stock_sale",
+        "tbl_stock_sale_detail_sale_id_tbl_stock_sale_id_fk": {
+          "name": "tbl_stock_sale_detail_sale_id_tbl_stock_sale_id_fk",
+          "tableFrom": "tbl_stock_sale_detail",
+          "tableTo": "tbl_stock_sale",
           "columnsFrom": [
             "sale_id"
           ],
@@ -276,12 +561,38 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "stock_sale_detail_part_id_part_catalogue_id_fk": {
-          "name": "stock_sale_detail_part_id_part_catalogue_id_fk",
-          "tableFrom": "stock_sale_detail",
-          "tableTo": "part_catalogue",
+        "tbl_stock_sale_detail_part_id_tbl_part_catalogue_id_fk": {
+          "name": "tbl_stock_sale_detail_part_id_tbl_part_catalogue_id_fk",
+          "tableFrom": "tbl_stock_sale_detail",
+          "tableTo": "tbl_part_catalogue",
           "columnsFrom": [
             "part_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tbl_stock_sale_detail_created_by_tbl_user_id_fk": {
+          "name": "tbl_stock_sale_detail_created_by_tbl_user_id_fk",
+          "tableFrom": "tbl_stock_sale_detail",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tbl_stock_sale_detail_updated_by_tbl_user_id_fk": {
+          "name": "tbl_stock_sale_detail_updated_by_tbl_user_id_fk",
+          "tableFrom": "tbl_stock_sale_detail",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "updated_by"
           ],
           "columnsTo": [
             "id"
@@ -291,10 +602,97 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "public.stock": {
-      "name": "stock",
+    "public.tbl_session": {
+      "name": "tbl_session",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "name": "token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ip_address": {
+          "name": "ip_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_agent": {
+          "name": "user_agent",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "tbl_session_user_id_tbl_user_id_fk": {
+          "name": "tbl_session_user_id_tbl_user_id_fk",
+          "tableFrom": "tbl_session",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "tbl_session_token_unique": {
+          "name": "tbl_session_token_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "token"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.tbl_stock": {
+      "name": "tbl_stock",
       "schema": "",
       "columns": {
         "id": {
@@ -328,11 +726,23 @@
           "primaryKey": false,
           "notNull": true
         },
+        "created_by": {
+          "name": "created_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_by": {
+          "name": "updated_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         },
         "updated_at": {
@@ -344,38 +754,67 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "stock_part_id_part_catalogue_id_fk": {
-          "name": "stock_part_id_part_catalogue_id_fk",
-          "tableFrom": "stock",
-          "tableTo": "part_catalogue",
+        "tbl_stock_part_id_tbl_part_catalogue_id_fk": {
+          "name": "tbl_stock_part_id_tbl_part_catalogue_id_fk",
+          "tableFrom": "tbl_stock",
+          "tableTo": "tbl_part_catalogue",
           "columnsFrom": [
             "part_id"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "restrict",
+          "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "stock_supplier_id_supplier_id_fk": {
-          "name": "stock_supplier_id_supplier_id_fk",
-          "tableFrom": "stock",
-          "tableTo": "supplier",
+        "tbl_stock_supplier_id_tbl_supplier_id_fk": {
+          "name": "tbl_stock_supplier_id_tbl_supplier_id_fk",
+          "tableFrom": "tbl_stock",
+          "tableTo": "tbl_supplier",
           "columnsFrom": [
             "supplier_id"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "restrict",
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tbl_stock_created_by_tbl_user_id_fk": {
+          "name": "tbl_stock_created_by_tbl_user_id_fk",
+          "tableFrom": "tbl_stock",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tbl_stock_updated_by_tbl_user_id_fk": {
+          "name": "tbl_stock_updated_by_tbl_user_id_fk",
+          "tableFrom": "tbl_stock",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "updated_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "public.supplier": {
-      "name": "supplier",
+    "public.tbl_supplier": {
+      "name": "tbl_supplier",
       "schema": "",
       "columns": {
         "id": {
@@ -396,11 +835,23 @@
           "primaryKey": false,
           "notNull": true
         },
+        "created_by": {
+          "name": "created_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_by": {
+          "name": "updated_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         },
         "updated_at": {
@@ -411,12 +862,42 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "tbl_supplier_created_by_tbl_user_id_fk": {
+          "name": "tbl_supplier_created_by_tbl_user_id_fk",
+          "tableFrom": "tbl_supplier",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tbl_supplier_updated_by_tbl_user_id_fk": {
+          "name": "tbl_supplier_updated_by_tbl_user_id_fk",
+          "tableFrom": "tbl_supplier",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "updated_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "public.unit_price": {
-      "name": "unit_price",
+    "public.tbl_unit_price": {
+      "name": "tbl_unit_price",
       "schema": "",
       "columns": {
         "id": {
@@ -449,11 +930,23 @@
           "primaryKey": false,
           "notNull": true
         },
+        "created_by": {
+          "name": "created_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_by": {
+          "name": "updated_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         },
         "updated_at": {
@@ -465,10 +958,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "unit_price_part_id_part_catalogue_id_fk": {
-          "name": "unit_price_part_id_part_catalogue_id_fk",
-          "tableFrom": "unit_price",
-          "tableTo": "part_catalogue",
+        "tbl_unit_price_part_id_tbl_part_catalogue_id_fk": {
+          "name": "tbl_unit_price_part_id_tbl_part_catalogue_id_fk",
+          "tableFrom": "tbl_unit_price",
+          "tableTo": "tbl_part_catalogue",
           "columnsFrom": [
             "part_id"
           ],
@@ -477,13 +970,42 @@
           ],
           "onDelete": "restrict",
           "onUpdate": "no action"
+        },
+        "tbl_unit_price_created_by_tbl_user_id_fk": {
+          "name": "tbl_unit_price_created_by_tbl_user_id_fk",
+          "tableFrom": "tbl_unit_price",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tbl_unit_price_updated_by_tbl_user_id_fk": {
+          "name": "tbl_unit_price_updated_by_tbl_user_id_fk",
+          "tableFrom": "tbl_unit_price",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "updated_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "public.user_role": {
-      "name": "user_role",
+    "public.tbl_user_role": {
+      "name": "tbl_user_role",
       "schema": "",
       "columns": {
         "id": {
@@ -494,9 +1016,10 @@
         },
         "role_name": {
           "name": "role_name",
-          "type": "varchar(255)",
+          "type": "roles",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "role_description": {
           "name": "role_description",
@@ -504,11 +1027,23 @@
           "primaryKey": false,
           "notNull": true
         },
+        "created_by": {
+          "name": "created_by",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_by": {
+          "name": "updated_by",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         },
         "updated_at": {
@@ -519,12 +1054,42 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "tbl_user_role_created_by_tbl_user_id_fk": {
+          "name": "tbl_user_role_created_by_tbl_user_id_fk",
+          "tableFrom": "tbl_user_role",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tbl_user_role_updated_by_tbl_user_id_fk": {
+          "name": "tbl_user_role_updated_by_tbl_user_id_fk",
+          "tableFrom": "tbl_user_role",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "updated_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "public.user": {
-      "name": "user",
+    "public.tbl_user": {
+      "name": "tbl_user",
       "schema": "",
       "columns": {
         "id": {
@@ -539,23 +1104,53 @@
           "primaryKey": false,
           "notNull": false
         },
+        "password": {
+          "name": "password",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email_verified": {
+          "name": "email_verified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
         "image": {
           "name": "image",
-          "type": "varchar(255)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "roleId": {
           "name": "roleId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_by": {
+          "name": "created_by",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
+        },
+        "updated_by": {
+          "name": "updated_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         },
         "updated_at": {
@@ -567,10 +1162,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "user_roleId_user_role_id_fk": {
-          "name": "user_roleId_user_role_id_fk",
-          "tableFrom": "user",
-          "tableTo": "user_role",
+        "tbl_user_roleId_tbl_user_role_id_fk": {
+          "name": "tbl_user_roleId_tbl_user_role_id_fk",
+          "tableFrom": "tbl_user",
+          "tableTo": "tbl_user_role",
           "columnsFrom": [
             "roleId"
           ],
@@ -579,15 +1174,107 @@
           ],
           "onDelete": "set null",
           "onUpdate": "set null"
+        },
+        "tbl_user_created_by_tbl_user_id_fk": {
+          "name": "tbl_user_created_by_tbl_user_id_fk",
+          "tableFrom": "tbl_user",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tbl_user_updated_by_tbl_user_id_fk": {
+          "name": "tbl_user_updated_by_tbl_user_id_fk",
+          "tableFrom": "tbl_user",
+          "tableTo": "tbl_user",
+          "columnsFrom": [
+            "updated_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.tbl_verification": {
+      "name": "tbl_verification",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "identifier": {
+          "name": "identifier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.roles": {
+      "name": "roles",
+      "schema": "public",
+      "values": [
+        "Admin",
+        "Manager",
+        "Employee"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
   "_meta": {
     "columns": {},
     "schemas": {},
