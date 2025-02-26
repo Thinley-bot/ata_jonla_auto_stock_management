@@ -20,21 +20,21 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
     resolver: zodResolver(registerSchema),
     defaultValues: {
       email: "",
-      password: "", 
+      password: "",
       name: "",
     },
   })
 
-  const onSubmit = async (payload: z.infer<typeof registerSchema>) => {
+  const onSubmit = async ({email, password, name}: z.infer<typeof registerSchema>) => {
     setLoading(true)
     try {
-      const signUpResponse= await authClient.signUp.email({
-        email: payload.email,
-        password: payload.password,
-       name: payload.name,
+      const signUpResponse = await authClient.signUp.email({
+        email,
+        password,
+        name,
         callbackURL: "/",
       })
-      if(!signUpResponse.data){
+      if (!signUpResponse.data) {
         toast.error(signUpResponse?.error?.message || "An error occurred")
         return
       }
