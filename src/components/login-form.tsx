@@ -14,7 +14,6 @@ import { authClient } from "~/lib/auth-client"
 import { Checkbox } from "./ui/checkbox"
 import toast from "react-hot-toast"
 
-
 export function LoginForm({className,...props}: React.ComponentPropsWithoutRef<"div">) {
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -26,12 +25,12 @@ export function LoginForm({className,...props}: React.ComponentPropsWithoutRef<"
     },
   })
 
-  async function onSubmit(payload: z.infer<typeof loginSchema>) {
+  async function onSubmit({ email, password, rememberMe }: z.infer<typeof loginSchema>) {
     try {
       const response = await authClient.signIn.email({
-        email: payload.email,
-        password: payload.password,
-        rememberMe: payload.rememberMe,
+        email,
+        password,
+        rememberMe,
         callbackURL: "/dashboard",
       });
       if (!response.data) {

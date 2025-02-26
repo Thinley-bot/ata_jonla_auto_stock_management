@@ -10,9 +10,7 @@ import {
     supplier, 
     stock 
 } from "../schema/index";
-import { randomUUID } from "crypto";
 import pg from "pg";
-import { roles } from "./seed_data/user_role.seed";
 import { brands } from "./seed_data/brand.seed";
 import { categories } from "./seed_data/categories.seed";
 import { parts } from "./seed_data/parts.seed";
