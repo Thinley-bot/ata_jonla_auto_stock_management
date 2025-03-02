@@ -3,7 +3,7 @@ import { createTable } from "../schema";
 import { varchar } from "drizzle-orm/pg-core";
 import { part_category } from "./part_category";
 import { car_brand } from "./car_brand";
-import { relations } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { timestamps } from "./columns/timestamp.helper";
 import { users } from "./users";
 
@@ -36,3 +36,6 @@ export const part_catalogue_relations = relations(part_catalogue, ({ one }) => (
         references: [users.id],
     }),
 }))
+
+export type PartCatalogue = InferSelectModel<typeof part_catalogue>;
+export type NewPartCatalogue = Omit<InferInsertModel<typeof part_catalogue>,"id" | "createdAt" | "updatedAt" | "createdBy">;
