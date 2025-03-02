@@ -63,7 +63,7 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>name</FormLabel>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
                       <Input type="text" placeholder="name" {...field} />
                     </FormControl>

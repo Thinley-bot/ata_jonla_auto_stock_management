@@ -3,7 +3,7 @@ import React from 'react'
 import { api } from '~/trpc/react';
 
 const page =() => {
-  const { data, isLoading ,error} = api.car_brand.getCarBrandById.useQuery("021cff59-be87-482b-b23a-65d1dfc5df6b")
+  const { data, isLoading ,error} = api.partCatalogueRoutes.getPartCatalogues.useQuery();
     console.log("oiii",data)
   return (
     <div>page</div>
