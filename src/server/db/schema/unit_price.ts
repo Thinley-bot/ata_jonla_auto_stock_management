@@ -9,7 +9,7 @@ import { users } from "./users";
 export const unit_price = createTable("unit_price",{
     id: varchar("id", { length: 255 }).notNull().primaryKey().$defaultFn(() => randomUUID()),
     part_id: varchar("part_id").references(() => part_catalogue.id, { onDelete: "cascade" }),
-    unit_price:numeric("unit_price", { precision: 10, scale: 2 }).notNull(),
+    unit_price:numeric("unit_price", { precision: 10, scale: 2 }).notNull().$type<number>(),
     start_date: date("start_date").notNull(),
     end_date: date("end_date").notNull(),
     createdBy: varchar('created_by', { length: 255 }).notNull().references(()=> users.id),
@@ -32,5 +32,5 @@ export const unitPriceRelations = relations(unit_price, ({ one }) => ({
     }),
   }));
   
-export type NewUnitPrice = Omit<InferInsertModel<typeof unit_price>,"id" | "createdAt" | "updatedAt">
+export type NewUnitPrice = Omit<InferInsertModel<typeof unit_price>,"createdAt" | "updatedAt" | "updatedBy" | "createdBy">
 export type UnitPrice = InferSelectModel<typeof unit_price>
