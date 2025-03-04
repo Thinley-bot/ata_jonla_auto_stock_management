@@ -12,13 +12,14 @@ const Breadcrum = () => {
                 {pathSegments.map((segment, index) => {
                     const href = `/${pathSegments.slice(0, index + 1).join("/")}`;
                     const isLastPath = index === pathSegments.length - 1;
+                    const upperCaseSegment = segment.charAt(0)?.toUpperCase() + segment.slice(1);
                     return (
                         <React.Fragment key={href}>
                             <BreadcrumbItem>
                                 {isLastPath ? (
-                                    <BreadcrumbPage>{segment}</BreadcrumbPage>
+                                    <BreadcrumbPage>{upperCaseSegment}</BreadcrumbPage>
                                 ) : (
-                                    <BreadcrumbLink href={href}>{segment}</BreadcrumbLink>
+                                    <BreadcrumbLink href={href}>{upperCaseSegment}</BreadcrumbLink>
                                 )}
                             </BreadcrumbItem>
                         </React.Fragment>
