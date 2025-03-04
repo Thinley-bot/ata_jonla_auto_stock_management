@@ -8,6 +8,7 @@ import {
 } from "../queries/part_catalogue";
 import { createTRPCRouter } from "../trpc";
 import { z } from "zod";
+import { handleError } from "~/server/helper/global_error";
 
 export const partCatalogueRouter = createTRPCRouter({
     getPartCatalogues: publicProcedure.query(async () => {
@@ -15,8 +16,7 @@ export const partCatalogueRouter = createTRPCRouter({
             const catalogues = await getPartCatalogues();
             return { success: true, data: catalogues, message: "Part catalogues retrieved successfully" };
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
-            return { success: false, message: "Failed to retrieve part catalogues", error: errorMessage };
+            return handleError(error, "Failed to retrieve part catalogues");
         }
     }),
 
@@ -28,8 +28,7 @@ export const partCatalogueRouter = createTRPCRouter({
             }
             return { success: true, data: part, message: "Part retrieved successfully" };
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
-            return { success: false, message: "Failed to retrieve part", error: errorMessage };
+            return handleError(error, "Failed to retrieve part");
         }
     }),
 
@@ -47,8 +46,7 @@ export const partCatalogueRouter = createTRPCRouter({
             await createPartCatalogue(ctx.user.id, input);
             return { success: true, message: "Part successfully created" };
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
-            return { success: false, message: "Failed to create part", error: errorMessage };
+            return handleError(error, "Failed to create part");
         }
     }),
 
@@ -75,8 +73,7 @@ export const partCatalogueRouter = createTRPCRouter({
             await updatePartCatalogue(id, updates, ctx.user.id);
             return { success: true, message: "Part successfully updated" };
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
-            return { success: false, message: "Failed to update part", error: errorMessage };
+            return handleError(error, "Failed to update part");
         }
     }),
 
@@ -92,8 +89,7 @@ export const partCatalogueRouter = createTRPCRouter({
             await deletePartCatalogue(input.id);
             return { success: true, message: "Part successfully deleted" };
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
-            return { success: false, message: "Failed to delete part", error: errorMessage };
+            return handleError(error, "Failed to delete part");
         }
     }),
 });
