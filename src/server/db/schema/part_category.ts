@@ -1,7 +1,7 @@
 import { varchar } from "drizzle-orm/pg-core";
 import { createTable } from "../schema";
 import { randomUUID } from "crypto";
-import { relations } from "drizzle-orm";
+import { InferInsertModel, relations } from "drizzle-orm";
 import { part_catalogue } from "./part_catalogue";
 import { timestamps } from "./columns/timestamp.helper";
 import { users } from "./users";
@@ -29,3 +29,5 @@ export const part_category_relations = relations(part_category, ({ many,one }) =
         references: [users.id],
     }),
 }))
+
+export type NewParCategory = InferInsertModel<typeof part_category>;
