@@ -1,7 +1,7 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
-import { carBrandRouter } from "./routers/car_brand";
-import { partCatalogueRouter } from "./routers/part_catalogue";
-import { unitPriceRouter } from "./routers/unitprice";
+import { carBrandRouter } from "./routers/car_brand.route";
+import { partCatalogueRouter } from "./routers/part_catalogue.route";
+import { unitPriceRouter } from "./routers/unitprice.route";
 
 /**
  * This is the primary router for your server.

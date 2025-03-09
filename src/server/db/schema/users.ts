@@ -1,4 +1,4 @@
-import { relations} from "drizzle-orm";
+import { InferInsertModel, relations} from "drizzle-orm";
 import { createTable } from "../schema";
 import { boolean, text, varchar } from "drizzle-orm/pg-core";
 import { user_role } from "./user_role";
@@ -41,3 +41,5 @@ export const usersRelations = relations(users, ({ one,many }) => ({
   supplier : many(supplier),
   unit_price : many(unit_price),
 }));
+
+export type NewUser = Omit<InferInsertModel<typeof users>,"id" | "emailVerified">

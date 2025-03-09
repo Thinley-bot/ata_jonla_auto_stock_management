@@ -1,7 +1,7 @@
 import { publicProcedure } from "~/middleware/user_role_auth";
 import { createTRPCRouter } from "../trpc";
 import { z } from "zod";
-import { getCarBrandById, getCarBrands } from "../queries/car_brand";
+import { getCarBrandById, getCarBrands } from "../queries/car_brand.queries";
 
 export const carBrandRouter = createTRPCRouter({
     getCarBrandById: publicProcedure.input(z.string()).query(async ({input}) => {

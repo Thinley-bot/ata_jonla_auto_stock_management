@@ -3,14 +3,15 @@ import { createTable } from "../schema";
 import { varchar, numeric, integer, timestamp } from "drizzle-orm/pg-core";
 import { part_catalogue } from "./part_catalogue";
 import { supplier } from "./supplier";
-import { relations } from "drizzle-orm";
+import { InferInsertModel, relations } from "drizzle-orm";
 import { timestamps } from "./columns/timestamp.helper";
 import { users } from "./users";
+import { number } from "zod";
 
 export const stock = createTable("stock", {
   id: varchar("id", { length: 255 }).notNull().primaryKey().$defaultFn(() => randomUUID()),
   quantity: integer("quantity").notNull().default(0),
-  total_cost: numeric("total_cost", { precision: 10, scale: 2 }).notNull(),
+  total_cost: numeric("total_cost", { precision: 10, scale: 2 }).notNull().$type<number>(),
   part_id: varchar("part_id", { length: 255 }).notNull().references(() => part_catalogue.id),
   supplier_id: varchar("supplier_id", { length: 255 }).notNull().references(() => supplier.id),
   createdBy: varchar('created_by', { length: 255 }).notNull().references(() => users.id),
@@ -36,3 +37,5 @@ export const stock_relations = relations(stock, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+export type NewStock = Omit<InferInsertModel<typeof stock>, "id" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy">;

@@ -5,7 +5,7 @@ import {
     getPartCatalogue, 
     getPartCatalogues, 
     updatePartCatalogue 
-} from "../queries/part_catalogue";
+} from "../queries/part_catalogue.queries";
 import { createTRPCRouter } from "../trpc";
 import { z } from "zod";
 import { handleError } from "~/server/helper/global_error";
@@ -40,7 +40,7 @@ export const partCatalogueRouter = createTRPCRouter({
             brand_id: z.string(),
         })
     ).mutation(async ({ input, ctx }) => {
-        if (!ctx.user) return { success: false, message: "Not Authorized" };
+        if (!ctx.user?.id) return { success: false, message: "Not Authorized" };
 
         try {
             await createPartCatalogue(ctx.user.id, input);

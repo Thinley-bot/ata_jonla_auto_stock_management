@@ -1,7 +1,7 @@
     import { randomUUID } from "crypto";
     import { createTable } from "../schema";
     import { varchar, numeric } from "drizzle-orm/pg-core";
-    import { relations } from "drizzle-orm";
+    import { InferSelectModel, relations } from "drizzle-orm";
     import { stock_sale_detail } from "./sale_detail";
     import { timestamps } from "./columns/timestamp.helper";
     import { users } from "./users";
@@ -9,7 +9,7 @@
     export const stock_sale = createTable("stock_sale", {
         id: varchar("id", { length: 255 }).notNull().primaryKey().$defaultFn(() => randomUUID()),
         payment_mode: varchar("payment_mode", { length: 50 }),
-        total_sale: numeric("total_sale", { precision: 10, scale: 2 }).notNull(),
+        total_sale: numeric("total_sale", { precision: 10, scale: 2 }).notNull().$type<Number>(),
         createdBy: varchar('created_by', { length: 255 }).notNull().references(() => users.id),
         updatedBy: varchar('updated_by', { length: 255 }).references(() => users.id),
         ...timestamps,
@@ -26,3 +26,5 @@
             references: [users.id],
         }),
     }));
+
+export type NewSale = Omit<InferSelectModel<typeof stock_sale>, "id" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy">;
