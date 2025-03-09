@@ -30,4 +30,4 @@ export const part_category_relations = relations(part_category, ({ many,one }) =
     }),
 }))
 
-export type NewParCategory = InferInsertModel<typeof part_category>;
+export type NewPartCategory = Omit<InferInsertModel<typeof part_category>, "id" | "createdAt" | "updatedAt" | "createdBy">;

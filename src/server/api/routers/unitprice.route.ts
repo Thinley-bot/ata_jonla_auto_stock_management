@@ -1,6 +1,6 @@
 import { managerProcedure } from "~/middleware/user_role_auth";
 import { createTRPCRouter } from "../trpc";
-import { createUnitPrice, deleteUnitPrice, getUnitPrice, getUnitPrices, updateUnitPrice } from "../queries/unitprice";
+import { createUnitPrice, deleteUnitPrice, getUnitPrice, getUnitPrices, updateUnitPrice } from "../queries/unitprice.queries";
 import { z } from "zod";
 import { handleError } from "~/server/helper/global_error";
 
