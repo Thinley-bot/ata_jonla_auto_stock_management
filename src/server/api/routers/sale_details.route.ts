@@ -4,7 +4,7 @@ import { z } from "zod";
 import { handleError } from "~/server/helper/global_error";
 import { deleteStockSaleDetailImpl, getStockSaleDetailImpl, getStockSaleDetailsImpl, newStockSaleDetailImpl, updateStockSaleDetailImpl } from "../queries/sale_detail.queries";
 
-export const StockSaleDetailRouter = createTRPCRouter({
+export const saleDetailRouter = createTRPCRouter({
     // Get all stock sale details
     getStockSaleDetails: managerProcedure.query(async () => {
         return await getStockSaleDetailsImpl();

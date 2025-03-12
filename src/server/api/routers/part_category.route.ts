@@ -4,7 +4,7 @@ import { z } from "zod";
 import { handleError } from "~/server/helper/global_error";
 import { createPartCategoryImpl, deletePartCategoryImpl, getPartCategoriesImpl, getPartCategoryImpl, updatePartCategoryImpl } from "../queries/part_category.queries";
 
-export const PartCategotyRouter = createTRPCRouter({
+export const PartCategoryRouter = createTRPCRouter({
 
 getPartCategories: managerProcedure.query(async () => await getPartCategoriesImpl),
 

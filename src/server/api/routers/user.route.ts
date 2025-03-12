@@ -1,16 +1,11 @@
 import { z } from "zod";
-import { managerProcedure } from "~/middleware/user_role_auth";
+import { managerProcedure, publicProcedure } from "~/middleware/user_role_auth";
 import { createTRPCRouter } from "../trpc";
 import { handleError } from "~/server/helper/global_error";
-import { 
-  getUsersImpl,
-  getUserImpl,
-  updateUserImpl,
-  deleteUserImpl,
-} from "../queries/users.queries";
+import { getUsersImpl,getUserImpl,updateUserImpl,deleteUserImpl} from "../queries/users.queries";
 
 export const userRouter = createTRPCRouter({
-  getUsers: managerProcedure.query(async () => await getUsersImpl()),
+  getUsers: publicProcedure.query(async () => await getUsersImpl()),
 
   getUser: managerProcedure
     .input(z.string())
@@ -40,7 +35,7 @@ export const userRouter = createTRPCRouter({
         return { 
           success: true, 
           message: "User successfully updated",
-          data: result[0]
+          data: result
         };
       } catch (error) {
         return handleError(error, "Failed to update user");
