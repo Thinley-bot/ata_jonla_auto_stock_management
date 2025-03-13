@@ -5,7 +5,13 @@ import { handleError } from "~/server/helper/global_error";
 import { getUsersImpl,getUserImpl,updateUserImpl,deleteUserImpl} from "../queries/users.queries";
 
 export const userRouter = createTRPCRouter({
-  getUsers: publicProcedure.query(async () => await getUsersImpl()),
+  getUsers: publicProcedure.input(z.object({
+    limit: z.number().min(1).max(100).default(10),
+    cursor: z.string().optional(),
+    direction: z.enum(["next", "prev"]).default("next"),
+    sortBy: z.string().optional(),
+    sortOrder: z.enum(["asc", "desc"]).default("asc"),
+  })).query(async ({input}) => await getUsersImpl(input)),
 
   getUser: managerProcedure
     .input(z.string())

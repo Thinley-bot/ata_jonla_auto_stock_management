@@ -7,6 +7,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { CirclePlus, Filter } from "lucide-react"
+import { useState } from "react"
+import AddUserForm from "~/components/forms/users/addUserForm"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 
@@ -25,12 +27,13 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TData, TValue>) {
+  const [showAddUserModal,setShowAddUserModal] = useState(false)
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
-  console.log(data)
 
   return (
     <div className="space-y-4">
@@ -44,15 +47,7 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
           />
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="default">
-            <Filter className="mr-2 h-4 w-4" />
-            Email
-          </Button>
-          <Button variant="outline" size="default">
-            <Filter className="mr-2 h-4 w-4" />
-            Role
-          </Button>
-          <Button variant="default" size="default">
+          <Button variant="default" size="default" onClick={() => setShowAddUserModal(true)}>
             <CirclePlus/>
             User
           </Button>
@@ -102,6 +97,9 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
           </TableBody>
         </Table>
       </div>
+      {
+        showAddUserModal ? <AddUserForm closeDialog={() => setShowAddUserModal(false)}/> : ""
+      }
     </div>
   )
 }
