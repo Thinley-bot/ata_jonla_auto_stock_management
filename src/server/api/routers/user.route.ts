@@ -33,15 +33,15 @@ export const userRouter = createTRPCRouter({
       const existingUser = await getUserImpl(id);
       
       if (!existingUser) {
-        return { success: false, message: "The user doesn't exist" };
+        return { success: false, message: "The user doesn't exist" , error : "User doesn't exist in the user table." };;
       }
       
       try {
         const result = await updateUserImpl(id, updates);
         return { 
           success: true, 
+          data: result,
           message: "User successfully updated",
-          data: result
         };
       } catch (error) {
         return handleError(error, "Failed to update user");
@@ -54,7 +54,7 @@ export const userRouter = createTRPCRouter({
       const existingUser = await getUserImpl(input.id);
       
       if (!existingUser) {
-        return { success: false, message: "The user doesn't exist" };
+        return { success: false, message: "The user doesn't exist" , error : "User doesn't exist in the user table." };
       }
       
       try {

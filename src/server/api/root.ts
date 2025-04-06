@@ -1,12 +1,13 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { carBrandRouter } from "./routers/car_brand.route";
 import { partCatalogueRouter } from "./routers/part_catalogue.route";
-import { unitPriceRouter } from "./routers/unitprice.route";
+import { unitPriceRouter } from "./routers/unit_price.route";
 import { PartCategoryRouter } from "./routers/part_category.route";
 import { saleRouter } from "./routers/sale.route";
 import { saleDetailRouter } from "./routers/sale_details.route";
 import { stockRouter } from "./routers/stock.route";
 import { userRouter } from "./routers/user.route";
+import { userRoleRoutes } from "./routers/user_roles.route";
 
 /**
  * This is the primary router for your server.
@@ -22,6 +23,7 @@ export const appRouter = createTRPCRouter({
   saleRoutes : saleRouter,
   saleDetailRoutes : saleDetailRouter,
   stockRoutes : stockRouter,
+  userRolesRoutes : userRoleRoutes
 });
 
 // export type definition of API
