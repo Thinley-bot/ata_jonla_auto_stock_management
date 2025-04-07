@@ -5,6 +5,17 @@
 import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+    images: {
+        remotePatterns: [
+          {
+            protocol: "https",
+            hostname: "eewehmznnchlhvesshkj.supabase.co",
+            port: "", 
+            pathname: "/storage/v1/object/public/userimage/**", 
+          },
+        ],
+      },
+};
 
 export default config;

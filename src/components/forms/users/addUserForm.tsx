@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { zodResolver, zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "~/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form";
@@ -21,7 +21,6 @@ import { Loader2 } from "lucide-react";
 import { authClient } from "~/lib/auth-client";
 import Image from "next/image";
 import { uploadImage } from "~/supabase/storage/client";
-import { UserRouter } from "~/server/api/routers/user.route";
 
 const formSchema = z.object({
     name: z.string().min(2, { message: "Name must be at least 4 characters." }),
@@ -97,12 +96,7 @@ export default function AddUserForm({ closeDialog }: { closeDialog: () => void }
                     role_id: values.roleId,
                 }
             });
-    
-            if (!userUpdateRes?.message) {
-                throw new Error(userUpdateRes?.message || "Failed to update user role");
-            }
-    
-            // Success
+
             toast.success(`User ${values.name} created successfully`);
             closeDialog();
     
