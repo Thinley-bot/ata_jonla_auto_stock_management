@@ -91,7 +91,7 @@ export default function ProductCataloguePage() {
 
   return (
     <div className="container px-4 py-5">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-2">
         <div className="relative w-72">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input

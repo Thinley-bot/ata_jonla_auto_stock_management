@@ -8,7 +8,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <AppSidebar />
       <SidebarInset className="flex flex-col h-screen overflow-hidden">
         <Header />
-        <div className="rounded-lg bg-sidebar h-screen my-2 border border-[hsl(var(--sidebar-border))] mr-2">
+        <div className="rounded-lg bg-sidebar h-screen my-2 border border-[hsl(var(--sidebar-border))] mr-2 overflow-auto">
           {children}
         </div>
       </SidebarInset>

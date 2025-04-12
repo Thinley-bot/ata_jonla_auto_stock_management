@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { CirclePlus, Filter } from "lucide-react"
+import { CirclePlus, Filter, Search } from "lucide-react"
 import { useState, useEffect } from "react"
 import AddUserForm from "~/components/forms/users/addUserForm"
 import { Button } from "~/components/ui/button"
@@ -59,11 +59,12 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:w-80">
+        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Filter User..."
+            placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-3 pr-3"
+            className="pl-8"
           />
         </div>
         <div className="flex gap-2">

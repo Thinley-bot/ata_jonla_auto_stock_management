@@ -53,16 +53,8 @@ export function LoginForm({className,...props}: React.ComponentPropsWithoutRef<"
   return (
     <div className={cn("flex flex-col gap-6 relative", className)} {...props}>
       {isLoading && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="relative w-24 h-24">
-            <Image 
-              src="/assets/img/Khorlo.png" 
-              alt="Loading" 
-              fill
-              className="object-contain animate-spin-slow"
-              priority
-            />
-          </div>
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
         </div>
       )}
       

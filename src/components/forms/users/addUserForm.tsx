@@ -20,138 +20,215 @@ import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 import { authClient } from "~/lib/auth-client";
 import Image from "next/image";
-import { uploadImage } from "~/supabase/storage/client";
+import { createSupabaseClient } from "~/supabase/client";
 
 const formSchema = z.object({
     name: z.string().min(2, { message: "Name must be at least 4 characters." }),
     email: z.string().email({ message: "Please enter a valid email address." }),
-    image: z.instanceof(File),
+    image: z.instanceof(File).optional(),
     roleId: z.string().min(1, { message: "Please select a role." }),
-    password: z.string().min(8, { message: "Password must be at least 8 characters." }),
+    password: z.string().min(8, { message: "Password must be at least 8 characters." }).optional(),
 });
 
-export default function AddUserForm({ closeDialog }: { closeDialog: () => void }) {
+export default function AddUserForm({ 
+    closeDialog, 
+    user 
+}: { 
+    closeDialog: () => void;
+    user?: {
+        id: string;
+        name: string;
+        email: string;
+        image_url?: string;
+        role_id: string;
+    };
+}) {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
     // Fetch user roles
     const { data: userRoles, isLoading: isRolesLoading } = api.userRolesRoutes.getUserRoles.useQuery();
 
-    //Update the user role
-    const { mutate: updateUserRole } = api.userRoutes.updateUser.useMutation();
+    //Update the user role and details
+    const { mutate: updateUser } = api.userRoutes.updateUser.useMutation();
     const utils = api.useUtils();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "",
-            email: "",
+            name: user?.name ?? "",
+            email: user?.email ?? "",
             image: undefined,
-            roleId: "",
+            roleId: user?.role_id ?? "",
             password: "",
         },
     });
 
     useEffect(() => {
+        if (user?.image_url) {
+            setImagePreview(user.image_url);
+        }
         return () => {
-            if (imagePreview) {
+            if (imagePreview && !imagePreview.startsWith('http')) {
                 URL.revokeObjectURL(imagePreview);
             }
         };
-    }, [imagePreview]);
+    }, [user]);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        setIsLoading(true);
-        try {
-            // 1. Upload image if provided
-            let imageUrl = "";
-            if (values.image) {
-                const uploadResult = await uploadImage({
-                    file: values.image,
-                    bucket: "userimage",
+        if (!user) {
+            setIsLoading(true);
+            try {
+                let imageUrl = "";
+
+                // Create new user
+                const { data: authData, error: authError } = await authClient.signUp.email({
+                    email: values.email,
+                    password: values.password!,
+                    name: values.name,
+                    image: imageUrl,
+                    callbackURL: '/',
                 });
-                
-                if (uploadResult.error) {
-                    throw new Error(uploadResult.error || "Failed to upload image");
+
+                if (authError) {
+                    if (authError.message?.includes('already exists')) {
+                        toast.error('A user with this email already exists.');
+                        return;
+                    }
+                    throw new Error(authError.message || 'Failed to create user');
                 }
-                imageUrl = uploadResult.imageUrl;
-            }
-    
-            // 2. Create auth user (must succeed before proceeding)
-            const { data: authData, error: authError } = await authClient.signUp.email({
-                email: values.email,
-                password: values.password,
-                name: values.name,
-                image: imageUrl,
-                callbackURL: "/",
-            });
-    
-            // Handle specific error cases
-            if (authError) {
-                // Check if the error is "User already exists"
-                if (authError.message?.includes("already exists") || authError.message?.includes("already registered")) {
-                    toast.error("A user with this email already exists. Please use a different email or try logging in.");
-                    return; // Exit the function early without throwing an error
+
+                if (!authData?.user?.id) {
+                    throw new Error('No user ID returned');
                 }
-                
-                // For other auth errors, throw a more specific error
-                throw new Error(authError.message || "Failed to create user in authentication system");
-            }
 
-            if (!authData?.user?.id) {
-                throw new Error("Failed to create user: No user ID returned");
-            }
+                // Upload image for new user if not done yet
+                if (values.image) {
+                    const extension = values.image.name.split('.').pop()?.toLowerCase() || '';
+                    const filePath = `user_${authData.user.id}.${extension}`;
+                    const supabase = createSupabaseClient();
+                    const { error: uploadError } = await supabase
+                        .storage
+                        .from('userimage')
+                        .upload(filePath, values.image, { upsert: true });
 
-            // 3. Update role ONLY if auth user was created
-            const userUpdateRes = await updateUserRole({
-                id: authData.user.id,
-                updates: {
-                    role_id: values.roleId,
+                    if (uploadError) {
+                        throw new Error(uploadError.message || 'Failed to upload image');
+                    }
+
+                    const { data: urlData } = supabase
+                        .storage
+                        .from('userimage')
+                        .getPublicUrl(filePath);
+                    imageUrl = urlData.publicUrl;
                 }
-            });
 
-            // Invalidate the user query to refresh the data
-            await utils.userRoutes.getUser.invalidate();
-
-            toast.success(`User ${values.name} created successfully`);
-            closeDialog();
-        } catch (error) {
-            console.error("User creation error:", error);
-            toast.error(
-                error instanceof Error ? error.message : "An unexpected error occurred"
-            );
-        } finally {
-            setIsLoading(false);
+                updateUser(
+                    {
+                        id: authData.user.id,
+                        updates: {
+                            role_id: values.roleId,
+                            name: values.name,
+                            email: values.email,
+                            image: imageUrl,
+                        },
+                    },
+                    {
+                        onSuccess: () => {
+                            toast.success(`User ${values.name} created successfully`);
+                            utils.userRoutes.getUsers.invalidate();
+                            closeDialog();
+                        },
+                        onError: (error) => {
+                            toast.error(error.message || 'Failed to set user role');
+                        },
+                    }
+                );
+            } catch (error) {
+                toast.error(error instanceof Error ? error.message : 'An unexpected error occurred');
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            await handleUpdate(values);
         }
     }
 
-    const roles = userRoles?.success && "data" in userRoles ? userRoles.data : [];
+    const handleUpdate = async (values: z.infer<typeof formSchema>) => {
+        setIsLoading(true);
+        try {
+            let imageUrl = user?.image_url ?? "";
 
-    if (isRolesLoading) {
-        return (
-            <Dialog open={true}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Create New User</DialogTitle>
-                        <DialogDescription>
-                        Add a new user to the system. All fields are required except for the profile image.
-                    </DialogDescription>
-                    </DialogHeader>
-                    <div className="flex items-center justify-center py-8">
-                        <Loader2 className="h-8 w-8 animate-spin" />
-                    </div>
-                </DialogContent>
-            </Dialog>
-        );
-    }
+            if (values.image) {
+                // Use consistent file path: user_<userId>.<extension>
+                const extension = values.image.name.split('.').pop()?.toLowerCase() || '';
+                if (!['jpg', 'jpeg', 'png'].includes(extension)) {
+                    throw new Error('Only JPG, JPEG, or PNG files are allowed');
+                }
+                const filePath = `user_${user?.id ?? 'new'}.${extension}`;
+
+                // Upload new image, overwriting if it exists
+                const supabase = createSupabaseClient();
+                const { error: uploadError } = await supabase
+                    .storage
+                    .from('userimage')
+                    .update(filePath, values.image, {
+                        upsert: true, // Overwrite existing file
+                        cacheControl: '3600',
+                    });
+
+                if (uploadError) {
+                    throw new Error(uploadError.message || 'Failed to upload image');
+                }
+
+                // Get public or signed URL
+                const { data: urlData } = supabase
+                    .storage
+                    .from('userimage')
+                    .getPublicUrl(filePath);
+
+                imageUrl = urlData.publicUrl;
+                if (!imageUrl) {
+                    throw new Error('Failed to retrieve image URL');
+                }
+            }
+
+            const updates = {
+                role_id: values.roleId,
+                name: values.name,
+                email: values.email,
+                image: imageUrl,
+            };
+
+            updateUser(
+                { id: user!.id, updates },
+                {
+                    onSuccess: () => {
+                        toast.success(`User ${values.name} updated successfully`);
+                        utils.userRoutes.getUsers.invalidate();
+                        closeDialog();
+                    },
+                    onError: (error) => {
+                        toast.error(error.message || 'Failed to update user');
+                    },
+                }
+            );
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : 'An unexpected error occurred');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const roles = userRoles?.success && "data" in userRoles ? userRoles.data : [];
 
     return (
         <Dialog open={true} onOpenChange={(open) => !open && closeDialog?.()}>
             <DialogContent className="max-h-screen overflow-y-auto sm:max-w-[625px]">
                 <DialogHeader>
-                    <DialogTitle>Create New User</DialogTitle>
+                    <DialogTitle>{user ? 'Update User' : 'Create New User'}</DialogTitle>
                     <DialogDescription>
-                        Add a new user to the system. All fields are required except for the profile image.
+                        {user ? 'Update an existing user.' : 'Add a new user to the system. All fields are required.'}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -194,54 +271,57 @@ export default function AddUserForm({ closeDialog }: { closeDialog: () => void }
                                     </FormItem>
                                 )}
                             />
-
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Password</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="••••••••"
-                                                type="password"
-                                                {...field}
-                                                disabled={isLoading}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="roleId"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Role</FormLabel>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            value={field.value}
-                                            disabled={isLoading}
-                                        >
+                            
+                            {!user && (
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Password</FormLabel>
                                             <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select a role" />
-                                                </SelectTrigger>
+                                                <Input
+                                                    type="password"
+                                                    placeholder="••••••••"
+                                                    {...field}
+                                                    disabled={isLoading}
+                                                />
                                             </FormControl>
-                                            <SelectContent>
-                                                {roles.map((role) => (
-                                                    <SelectItem key={role.id} value={role.id}>
-                                                        {role.role_name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
+                            <div className={user ? "col-span-full" : ""}>
+                                <FormField
+                                    control={form.control}
+                                    name="roleId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Role</FormLabel>
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                value={field.value}
+                                                disabled={isLoading}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select a role" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {roles.map((role) => (
+                                                        <SelectItem key={role.id} value={role.id}>
+                                                            {role.role_name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                         </div>
 
                         <FormField
@@ -257,12 +337,18 @@ export default function AddUserForm({ closeDialog }: { closeDialog: () => void }
                                             disabled={isLoading}
                                             onChange={(e) => {
                                                 const file = e.target.files?.[0];
-                                                if (file) {
+                                                if (file) { 
                                                     field.onChange(file);
+                                                    if (imagePreview && !imagePreview.startsWith('http')) {
+                                                        URL.revokeObjectURL(imagePreview);
+                                                    }
                                                     setImagePreview(URL.createObjectURL(file));
                                                 } else {
                                                     field.onChange(undefined);
-                                                    setImagePreview(null);
+                                                    if (imagePreview && !imagePreview.startsWith('http')) {
+                                                        URL.revokeObjectURL(imagePreview);
+                                                        setImagePreview(user?.image_url || null);
+                                                    }
                                                 }
                                             }}
                                         />
@@ -275,11 +361,6 @@ export default function AddUserForm({ closeDialog }: { closeDialog: () => void }
                                                 alt="Profile preview"
                                                 src={imagePreview}
                                                 className="rounded-full object-cover"
-                                                onLoadingComplete={() => {
-                                                    if (imagePreview) {
-                                                        URL.revokeObjectURL(imagePreview);
-                                                    }
-                                                }}
                                             />
                                         </div>
                                     )}
@@ -297,17 +378,32 @@ export default function AddUserForm({ closeDialog }: { closeDialog: () => void }
                             >
                                 Cancel
                             </Button>
-                            <Button
-                                type="submit"
-                                disabled={isLoading}
-                            >
-                                {isLoading ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Creating...
-                                    </>
-                                ) : "Create User"}
-                            </Button>
+                            {user ? (
+                                <Button
+                                    type="button"
+                                    disabled={isLoading}
+                                    onClick={()=>handleUpdate(form.getValues())}
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Updating...
+                                        </>
+                                    ) : 'Update User'}
+                                </Button>
+                            ) : (
+                                <Button
+                                    type="submit"
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Creating...
+                                        </>
+                                    ) : 'Create User'}
+                                </Button>
+                            )}
                         </div>
                     </form>
                 </Form>

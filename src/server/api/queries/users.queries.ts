@@ -58,6 +58,7 @@ export const getUsersImpl = async ({
 
 export const getUserImpl = async (id: string) =>
   await db.query.users.findFirst({
+    where: (users) => eq(users.id, id),
     with:{
         role:{
           columns :{
@@ -67,7 +68,19 @@ export const getUserImpl = async (id: string) =>
     },
   })
 
-export const updateUserImpl = async (id: string, updateUser: Partial<NewUser>) =>
-  await db.update(users).set({ ...updateUser}).where(eq(users.id, id)).returning();
+export const updateUserImpl = async (id: string, updateUser: Partial<NewUser>) => {
+  console.log("updateUserImpl called with:", { id, updateUser });
+  try {
+    const result = await db.update(users).set({ ...updateUser}).where(eq(users.id, id)).returning();
+    console.log("updateUserImpl result:", result);
+    return result;
+  } catch (error) {
+    console.error("Error in updateUserImpl:", error);
+    throw error;
+  }
+}
+
+export const createUserImpl = async (newUser: NewUser) =>
+  await db.insert(users).values(newUser).returning();
 
 export const deleteUserImpl = async (id: string) =>await db.delete(users).where(eq(users.id, id));

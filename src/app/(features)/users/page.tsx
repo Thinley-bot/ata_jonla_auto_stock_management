@@ -4,12 +4,15 @@ import { columns } from "./column";
 import { DataTable } from "./data_table";
 import { api } from "~/trpc/react";
 import { User } from "./column";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import AddUserForm from "~/components/forms/users/addUserForm";
 
 export default function Page() {
   const [search, setSearch] = useState("");
   const [cursor, setCursor] = useState<string | undefined>();
   const [direction, setDirection] = useState<"next" | "prev">("next");
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [showUserForm, setShowUserForm] = useState(false);
 
   const { data: userData, isLoading, refetch } = api.userRoutes.getUsers.useQuery({
     limit: 10,
@@ -45,10 +48,24 @@ export default function Page() {
     }
   };
   
+  const handleViewUser = (user: User) => {
+    setSelectedUser(user);
+    setShowUserForm(true);
+  };
+
+  const handleCloseUserForm = () => {
+    setSelectedUser(null);
+    setShowUserForm(false);
+    refetch();
+  };
+  
+  // Use useMemo to create the columns array only when handleViewUser changes
+  const userColumns = useMemo(() => columns(handleViewUser), [handleViewUser]);
+  
   return (
     <div className="container px-4 py-5">
       <DataTable 
-        columns={columns} 
+        columns={userColumns}
         data={formattedData}
         onSearch={handleSearch}
         onPageChange={handlePageChange}
@@ -56,6 +73,19 @@ export default function Page() {
         hasPrevPage={!!userData?.prevCursor}
         isLoading={isLoading}
       />
+      
+      {showUserForm && selectedUser && (
+        <AddUserForm 
+          closeDialog={handleCloseUserForm} 
+          user={{
+            id: selectedUser.id,
+            name: selectedUser.name || "",
+            email: selectedUser.email,
+            image_url: selectedUser.image,
+            role_id: selectedUser.role?.id || "",
+          }}
+        />
+      )}
     </div>
   );
 }

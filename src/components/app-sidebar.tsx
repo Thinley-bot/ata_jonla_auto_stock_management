@@ -79,14 +79,6 @@ const data = {
           title: "Sales",
           url: "/sales",
         },
-        {
-          title: "Sales Details",
-          url: "/sales/details",
-        },
-        {
-          title: "Sales Report",
-          url: "/sales/report",
-        }
       ],
     }
   ],

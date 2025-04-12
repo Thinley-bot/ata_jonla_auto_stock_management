@@ -48,16 +48,16 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
-        {searchKey && (
+      {searchKey && (
+        <div className="flex items-center py-4">
           <Input
             placeholder="Search..."
             value={globalFilter}
             onChange={(event) => setGlobalFilter(event.target.value)}
             className="max-w-sm"
           />
-        )}
-      </div>
+        </div>
+      )}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
