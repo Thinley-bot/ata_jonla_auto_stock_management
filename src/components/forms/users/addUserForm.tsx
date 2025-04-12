@@ -39,6 +39,7 @@ export default function AddUserForm({ closeDialog }: { closeDialog: () => void }
 
     //Update the user role
     const { mutate: updateUserRole } = api.userRoutes.updateUser.useMutation();
+    const utils = api.useUtils();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -85,8 +86,20 @@ export default function AddUserForm({ closeDialog }: { closeDialog: () => void }
                 callbackURL: "/",
             });
     
-            if (authError || !authData?.user?.id) {
-                throw new Error(authError?.message || "Failed to create user in authentication system");
+            // Handle specific error cases
+            if (authError) {
+                // Check if the error is "User already exists"
+                if (authError.message?.includes("already exists") || authError.message?.includes("already registered")) {
+                    toast.error("A user with this email already exists. Please use a different email or try logging in.");
+                    return; // Exit the function early without throwing an error
+                }
+                
+                // For other auth errors, throw a more specific error
+                throw new Error(authError.message || "Failed to create user in authentication system");
+            }
+
+            if (!authData?.user?.id) {
+                throw new Error("Failed to create user: No user ID returned");
             }
 
             // 3. Update role ONLY if auth user was created
@@ -97,9 +110,11 @@ export default function AddUserForm({ closeDialog }: { closeDialog: () => void }
                 }
             });
 
+            // Invalidate the user query to refresh the data
+            await utils.userRoutes.getUser.invalidate();
+
             toast.success(`User ${values.name} created successfully`);
             closeDialog();
-    
         } catch (error) {
             console.error("User creation error:", error);
             toast.error(

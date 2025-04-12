@@ -11,6 +11,8 @@ export const userRouter = createTRPCRouter({
     direction: z.enum(["next", "prev"]).default("next"),
     sortBy: z.string().optional(),
     sortOrder: z.enum(["asc", "desc"]).default("asc"),
+    search: z.string().optional(),
+    roleFilter: z.string().optional(),
   })).query(async ({input}) => await getUsersImpl(input)),
 
   getUser: managerProcedure

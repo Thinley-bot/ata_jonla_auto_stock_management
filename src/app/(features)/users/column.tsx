@@ -1,6 +1,7 @@
 "use client"
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
+import ActionCell from "~/components/ui/actioncell";
 
 export type User= {
   id: string;
@@ -11,6 +12,7 @@ export type User= {
   role: { id: string; role_name: string } | null;
 };
 
+
 export const columns: ColumnDef<User>[] = [
   {
     accessorKey:"image",
@@ -18,7 +20,7 @@ export const columns: ColumnDef<User>[] = [
     cell:({ row }) => {
       const imageSrc = row.getValue("image");
       return imageSrc && typeof imageSrc === "string" && imageSrc !== "" ? (
-        <Image src={imageSrc} height={100} width={100} alt="user image" className="rounded-3xl"/>
+        <Image src={imageSrc} height={50} width={50} alt="user image" className="rounded-full"/>
       ) : (
         <span>No image</span>
       );
@@ -39,5 +41,12 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey:"createdAt",
     header:"Created At"
+  },
+  {
+    header:"Action",
+    cell: ({ row }) => {
+      const userId = row.original.id;
+      return <ActionCell itemId={userId} item="user"/>;
+    }
   }
 ];

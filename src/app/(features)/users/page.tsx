@@ -1,26 +1,61 @@
-import "server-only";
+"use client";
 
-import {columns } from "./column";
+import { columns } from "./column";
 import { DataTable } from "./data_table";
-import type { AppRouter } from "~/server/api/root";
-import { inferRouterOutputs } from "@trpc/server";
-import { api, HydrateClient } from "~/trpc/server";
+import { api } from "~/trpc/react";
+import { User } from "./column";
+import { useState } from "react";
 
-type RouterOutputs = inferRouterOutputs<AppRouter>;
-type GetUsersOutput = RouterOutputs["userRoutes"]["getUsers"];
+export default function Page() {
+  const [search, setSearch] = useState("");
+  const [cursor, setCursor] = useState<string | undefined>();
+  const [direction, setDirection] = useState<"next" | "prev">("next");
 
-async function getInitialData(): Promise<GetUsersOutput> {
-  return await api.userRoutes.getUsers({ limit: 10, direction:"next"});
-}
+  const { data: userData, isLoading, refetch } = api.userRoutes.getUsers.useQuery({
+    limit: 10,
+    direction,
+    cursor,
+    search: search || undefined,
+  });
 
-export default async function Page() {
-  const initialData = await getInitialData();
-  console.log(initialData)
+  const formattedData: User[] = userData?.items?.map(user => ({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    image: user.image || "",
+    createdAt: user.createdAt,
+    role: user.role ? {
+      id: user.role.id,
+      role_name: user.role.role_name || ""
+    } : null
+  })) || [];
+
+  const handleSearch = (searchTerm: string) => {
+    setSearch(searchTerm);
+    setCursor(undefined);
+    setDirection("next");
+  };
+
+  const handlePageChange = (newDirection: "next" | "prev") => {
+    setDirection(newDirection);
+    if (newDirection === "next") {
+      setCursor(userData?.nextCursor);
+    } else {
+      setCursor(userData?.prevCursor);
+    }
+  };
+  
   return (
-    <HydrateClient>
-      <div className="container px-4 py-5">
-        <DataTable columns={columns} data={initialData} />
-      </div>
-    </HydrateClient>
+    <div className="container px-4 py-5">
+      <DataTable 
+        columns={columns} 
+        data={formattedData}
+        onSearch={handleSearch}
+        onPageChange={handlePageChange}
+        hasNextPage={!!userData?.nextCursor}
+        hasPrevPage={!!userData?.prevCursor}
+        isLoading={isLoading}
+      />
+    </div>
   );
 }

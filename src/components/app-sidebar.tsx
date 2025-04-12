@@ -17,76 +17,75 @@ const data = {
   navMain: [
     {
       title:"Dashboard",
-      url:"#",
+      url:"/dashboard",
       icon: LayoutDashboard,
-      isActive:false
+      isActive: true
     },
     {
       title: "User Management",
-      url: "#",
+      url: "/users",
       icon: UserRoundCog,
-      isActive: true,
+      isActive: false,
       items: [
         {
           title: "Users",
           url: "/users",
         },
-        {
-          title: "Users Report",
-          url: "#",
-        },
       ],
     },
     {
       title: "Product",
-      url: "#",
+      url: "/products",
       icon: ShoppingCart,
+      isActive: false,
       items: [
         {
-          title: "Product Catagory",
-          url: "#",
+          title: "Product Categories",
+          url: "/products/categories",
         },
         {
-          title: "Car Brand",
-          url: "#",
+          title: "Car Brands",
+          url: "/products/brands",
         },
         {
           title: "Product Catalogue",
-          url: "#",
+          url: "/products/catalogue",
         },
       ],
     },
     {
       title: "Stock",
-      url: "#",
+      url: "/stock",
       icon: ShoppingBasket,
+      isActive: false,
       items: [
         {
-          title: "Suppliers",
-          url: "#",
+          title: "Stock",
+          url: "/stock",
         },
         {
-          title: "Stocks",
-          url: "#",
+          title: "Supplier",
+          url: "/supplier",
         },
       ],
     },
     {
       title: "Sales",
-      url: "#",
+      url: "/sales",
       icon: HandCoins,
+      isActive: false,
       items: [
         {
           title: "Sales",
-          url: "#",
+          url: "/sales",
         },
         {
           title: "Sales Details",
-          url: "#",
+          url: "/sales/details",
         },
         {
           title: "Sales Report",
-          url: "#",
+          url: "/sales/report",
         }
       ],
     }

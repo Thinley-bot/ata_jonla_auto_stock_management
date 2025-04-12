@@ -3,6 +3,17 @@ import { managerProcedure } from "~/middleware/user_role_auth";
 import { createTRPCRouter } from "../trpc";
 import { handleError } from "~/server/helper/global_error";
 import { createStockSaleImpl, deleteStockSaleImpl, getStockSaleImpl, getStockSalesImpl, updateStockSaleImpl } from "../queries/sale.queries";
+import { TRPCError } from "@trpc/server";
+
+const createSaleSchema = z.object({
+  payment_mode: z.string().min(1, "Payment mode is required"),
+  total_sale: z.number().min(0, "Total sale must be a positive number"),
+  invoice_number: z.string().optional(),
+  customer_name: z.string().optional(),
+  notes: z.string().optional(),
+});
+
+const updateSaleSchema = createSaleSchema.partial();
 
 export const saleRouter = createTRPCRouter({
   getStockSales: managerProcedure.query(async () => await getStockSalesImpl()),
@@ -70,7 +81,52 @@ export const saleRouter = createTRPCRouter({
       } catch (error) {
         return handleError(error, "Failed to delete stock sale");
       }
-    })
+    }),
+
+  create: managerProcedure
+    .input(createSaleSchema)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const sale = await ctx.db.stock_sale.create({
+          data: {
+            ...input,
+            createdBy: ctx.session.user.id,
+            updatedBy: ctx.session.user.id,
+          },
+        });
+        return { success: true, data: sale };
+      } catch (error) {
+        console.error("Error creating sale:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create sale",
+        });
+      }
+    }),
+
+  update: managerProcedure
+    .input(z.object({
+      id: z.string(),
+      data: updateSaleSchema,
+    }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const sale = await ctx.db.stock_sale.update({
+          where: { id: input.id },
+          data: {
+            ...input.data,
+            updatedBy: ctx.session.user.id,
+          },
+        });
+        return { success: true, data: sale };
+      } catch (error) {
+        console.error("Error updating sale:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update sale",
+        });
+      }
+    }),
 });
 
 export type SaleRouter = typeof saleRouter;

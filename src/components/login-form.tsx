@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "~/co
 import { cn } from "~/lib/utils"
 import { Input } from "~/components/ui/input"
 import { useForm } from "react-hook-form"
+import Image from "next/image"
+import { useState } from "react"
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form"
 import { loginSchema } from "~/form_schema/login"
@@ -15,6 +17,7 @@ import { Checkbox } from "./ui/checkbox"
 import toast from "react-hot-toast"
 
 export function LoginForm({className,...props}: React.ComponentPropsWithoutRef<"div">) {
+  const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -26,6 +29,7 @@ export function LoginForm({className,...props}: React.ComponentPropsWithoutRef<"
   })
 
   async function onSubmit({ email, password, rememberMe }: z.infer<typeof loginSchema>) {
+    setIsLoading(true)
     try {
       const response = await authClient.signIn.email({
         email,
@@ -41,12 +45,28 @@ export function LoginForm({className,...props}: React.ComponentPropsWithoutRef<"
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Something went wrong";
       toast.error(errorMessage);
+    } finally {
+      setIsLoading(false)
     }
   }
     
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+    <div className={cn("flex flex-col gap-6 relative", className)} {...props}>
+      {isLoading && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="relative w-24 h-24">
+            <Image 
+              src="/assets/img/Khorlo.png" 
+              alt="Loading" 
+              fill
+              className="object-contain animate-spin-slow"
+              priority
+            />
+          </div>
+        </div>
+      )}
+      
+      <Card className="w-full max-w-md mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>
@@ -63,7 +83,7 @@ export function LoginForm({className,...props}: React.ComponentPropsWithoutRef<"
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="email" {...field} />
+                      <Input type="email" placeholder="email" {...field} disabled={isLoading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -84,26 +104,30 @@ export function LoginForm({className,...props}: React.ComponentPropsWithoutRef<"
                       </a>
                     </div>
                     <FormControl>
-                      <Input type="password" placeholder="password" {...field} />
+                      <Input type="password" placeholder="password" {...field} disabled={isLoading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-                 <FormField
+              <FormField
                 control={form.control}
                 name="rememberMe"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                     <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={(checked) => field.onChange(checked)} />
+                      <Checkbox 
+                        checked={field.value} 
+                        onCheckedChange={(checked) => field.onChange(checked)} 
+                        disabled={isLoading}
+                      />
                     </FormControl>
                     <FormLabel className="text-sm font-normal">Remember Me</FormLabel>
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
-                Login
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Processing..." : "Login"}
               </Button>
               <div className="mt-4 text-center text-sm">
                 Don&apos;t have an account? Consult Admin

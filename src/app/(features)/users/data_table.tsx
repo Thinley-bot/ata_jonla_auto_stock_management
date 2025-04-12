@@ -7,10 +7,11 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { CirclePlus, Filter } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import AddUserForm from "~/components/forms/users/addUserForm"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
+import { useDebounce } from "~/hooks/use-debounce"
 
 import {
   Table,
@@ -24,10 +25,29 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  onSearch: (search: string) => void
+  onPageChange: (direction: "next" | "prev", cursor?: string) => void
+  hasNextPage: boolean
+  hasPrevPage: boolean
+  isLoading: boolean
 }
 
-export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TData, TValue>) {
-  const [showAddUserModal,setShowAddUserModal] = useState(false)
+export function DataTable<TData, TValue>({ 
+  columns, 
+  data,
+  onSearch,
+  onPageChange,
+  hasNextPage,
+  hasPrevPage,
+  isLoading
+}: DataTableProps<TData, TValue>) {
+  const [showAddUserModal, setShowAddUserModal] = useState(false)
+  const [search, setSearch] = useState("")
+  const debouncedSearch = useDebounce(search, 300)
+
+  useEffect(() => {
+    onSearch(debouncedSearch)
+  }, [debouncedSearch, onSearch])
 
   const table = useReactTable({
     data,
@@ -41,8 +61,8 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
         <div className="relative w-full sm:w-80">
           <Input
             placeholder="Filter User..."
-            // value={filter}
-            // onChange={(e) => setFilter(e.target.value)}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             className="pl-3 pr-3"
           />
         </div>
@@ -74,7 +94,13 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-24 text-center">
+                  Loading...
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -97,9 +123,25 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
           </TableBody>
         </Table>
       </div>
-      {
-        showAddUserModal ? <AddUserForm closeDialog={() => setShowAddUserModal(false)}/> : ""
-      }
+      <div className="flex items-center justify-end space-x-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange("prev")}
+          disabled={!hasPrevPage}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange("next")}
+          disabled={!hasNextPage}
+        >
+          Next
+        </Button>
+      </div>
+      {showAddUserModal ? <AddUserForm closeDialog={() => setShowAddUserModal(false)}/> : ""}
     </div>
   )
 }

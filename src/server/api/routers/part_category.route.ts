@@ -6,7 +6,7 @@ import { createPartCategoryImpl, deletePartCategoryImpl, getPartCategoriesImpl, 
 
 export const PartCategoryRouter = createTRPCRouter({
 
-getPartCategories: managerProcedure.query(async () => await getPartCategoriesImpl),
+getPartCategories: managerProcedure.query(async () => await getPartCategoriesImpl()),
 
 getPartCategory: managerProcedure.input(z.string()).query(async ({ input }) => await getPartCategoryImpl(input)),
 

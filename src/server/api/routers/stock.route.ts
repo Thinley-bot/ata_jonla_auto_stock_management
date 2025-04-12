@@ -1,11 +1,38 @@
 import { z } from "zod";
 import { handleError } from "~/server/helper/global_error"; 
-import { createStockImpl, getStockImpl, getStocksImpl, updateStockImpl } from "../queries/stock.queries";
+import { createStockImpl, getStockImpl, getStocksImpl, updateStockImpl, deleteStockImpl, getPaginatedStocksImpl } from "../queries/stock.queries";
 import { createTRPCRouter } from "../trpc";
 import { managerProcedure } from "~/middleware/user_role_auth";
 
 export const stockRouter = createTRPCRouter({
     getStocks: managerProcedure.query(async () => await getStocksImpl()),
+
+    getPaginatedStocks: managerProcedure
+        .input(z.object({
+            pageSize: z.number().min(1).max(100),
+            pageIndex: z.number().min(0),
+            sorting: z.array(z.object({
+                id: z.string(),
+                desc: z.boolean()
+            })).optional(),
+            filters: z.array(z.object({
+                id: z.string(),
+                value: z.string()
+            })).optional()
+        }))
+        .query(async ({ input }) => {
+            try {
+                const result = await getPaginatedStocksImpl(input);
+                return {
+                    success: true,
+                    data: result.data,
+                    pageCount: result.pageCount,
+                    message: "Stocks retrieved successfully"
+                };
+            } catch (error) {
+                return handleError(error, "Failed to retrieve stocks");
+            }
+        }),
 
     getStock: managerProcedure.input(z.string()).query(async ({ input }) => {
         try {
@@ -63,6 +90,21 @@ export const stockRouter = createTRPCRouter({
                 return { success: true, message: "Stock successfully updated", };
             } catch (error) {
                 return handleError(error, "Failed to update stock");
+            }
+        }),
+
+    deleteStock: managerProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ input }) => {
+            try {
+                const existingStock = await getStockImpl(input.id);
+                if (!existingStock || existingStock.length === 0) {
+                    return { success: false, message: "Stock not found" };
+                }
+                await deleteStockImpl(input.id);
+                return { success: true, message: "Stock successfully deleted" };
+            } catch (error) {
+                return handleError(error, "Failed to delete stock");
             }
         }),
 });
