@@ -12,8 +12,7 @@ export type User= {
   role: { id: string; role_name: string } | null;
 };
 
-
-export const columns: ColumnDef<User>[] = [
+export const columns = (onViewUser?: (user: User) => void): ColumnDef<User>[] => [
   {
     accessorKey:"image",
     header:"Image",
@@ -45,8 +44,12 @@ export const columns: ColumnDef<User>[] = [
   {
     header:"Action",
     cell: ({ row }) => {
-      const userId = row.original.id;
-      return <ActionCell itemId={userId} item="user"/>;
+      const user = row.original;
+      return <ActionCell 
+        itemId={user.id} 
+        item="user"
+        onEdit={() => onViewUser?.(user)}
+      />;
     }
   }
 ];

@@ -8,7 +8,7 @@ import type { Category } from "./column";
 import { CategoryForm } from "~/components/forms/category-form";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
-import { CirclePlus } from "lucide-react";
+import { CirclePlus, Search } from "lucide-react";
 import { Input } from "~/components/ui/input";
 
 export default function Page() {
@@ -36,13 +36,14 @@ export default function Page() {
 
   return (
     <div className="container px-4 py-5">
-      <div className="flex justify-between items-center mb-4">
-        <div className="w-1/3">
+      <div className="flex items-center justify-between mb-2">
+        <div className="relative w-72">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search categories..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="max-w-sm"
+            className="pl-8"
           />
         </div>
         <Button onClick={() => setShowAddModal(true)}>
@@ -50,10 +51,12 @@ export default function Page() {
           Add Category
         </Button>
       </div>
-      <DataTable
-        columns={columns}
-        data={filteredData}
-      />
+      <div className="mt-2">
+        <DataTable
+          columns={columns}
+          data={filteredData}
+        />
+      </div>
       <CategoryForm
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
@@ -74,4 +77,4 @@ export default function Page() {
       )}
     </div>
   );
-} 
+}

@@ -11,7 +11,7 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
 } from "@tanstack/react-table"
-import { CirclePlus } from "lucide-react"
+import { CirclePlus, Search } from "lucide-react"
 import { useState, useEffect } from "react"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
@@ -34,8 +34,8 @@ interface DataTableProps<TData, TValue> {
   onAddNew?: () => void
 }
 
-export function DataTable<TData, TValue>({ 
-  columns, 
+export function DataTable<TData, TValue>({
+  columns,
   data,
   searchKey,
   isLoading = false,
@@ -71,25 +71,14 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        {searchKey && (
-          <div className="relative w-full sm:w-80">
-            <Input
-              placeholder="Filter Categories..."
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              className="pl-3 pr-3"
-            />
-          </div>
-        )}
-        {onAddNew && (
+        <div className="rounded-md border">
           <div className="flex gap-2">
             <Button variant="default" size="default" onClick={onAddNew}>
               <CirclePlus className="mr-2 h-4 w-4" />
               Add Category
             </Button>
           </div>
-        )}
+
       </div>
       <div className="rounded-md border">
         <Table>

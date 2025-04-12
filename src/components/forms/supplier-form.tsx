@@ -11,6 +11,7 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
+import { CirclePlus } from 'lucide-react';
 
 export function SupplierForm() {
   const [isOpen, setIsOpen] = useState(false);
@@ -58,7 +59,7 @@ export function SupplierForm() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Add Supplier</Button>
+        <Button> <CirclePlus/>Add Supplier</Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
