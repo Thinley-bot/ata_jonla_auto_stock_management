@@ -5,7 +5,7 @@ import { DataTable } from "./data_table";
 import { api } from "~/trpc/react";
 import { User } from "./column";
 import { useState, useMemo } from "react";
-import AddUserForm from "~/components/forms/users/addUserForm";
+import AddUserForm from "~/components/forms/user-form";
 
 export default function Page() {
   const [search, setSearch] = useState("");

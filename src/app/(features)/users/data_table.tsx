@@ -8,7 +8,7 @@ import {
 } from "@tanstack/react-table"
 import { CirclePlus, Filter, Search } from "lucide-react"
 import { useState, useEffect } from "react"
-import AddUserForm from "~/components/forms/users/addUserForm"
+import AddUserForm from "~/components/forms/user-form"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 import { useDebounce } from "~/hooks/use-debounce"

@@ -2,11 +2,12 @@ import { z } from "zod";
 import { createTRPCRouter } from "~/server/api/trpc";
 import { managerProcedure } from "~/middleware/user_role_auth";
 import { eq, and, like, desc, asc } from "drizzle-orm";
+import { supplier } from "~/server/db/schema/supplier";
 
 export const supplierRouter = createTRPCRouter({
   getSuppliers: managerProcedure.query(async ({ ctx }) => {
     return ctx.db.query.supplier.findMany({
-      orderBy: (supplier, { asc }) => [asc(supplier.supplier_name)],
+      orderBy: (supplierTable, { asc }) => [asc(supplierTable.supplier_name)],
     });
   }),
 
@@ -30,59 +31,41 @@ export const supplierRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-      const { pageSize, pageIndex, sorting, filters } = input;
+      const { pageSize, pageIndex } = input;
       
-      // Build where conditions based on filters
-      const whereConditions = [];
-      if (filters && filters.length > 0) {
-        for (const filter of filters) {
-          if (filter.id === "supplier_name") {
-            whereConditions.push(like(ctx.db.supplier.supplier_name, `%${filter.value}%`));
-          }
-        }
-      }
-      
-      // Build order by based on sorting
-      let orderBy = [asc(ctx.db.supplier.supplier_name)];
-      if (sorting && sorting.length > 0) {
-        orderBy = sorting.map(sort => {
-          if (sort.id === "supplier_name") {
-            return sort.desc ? desc(ctx.db.supplier.supplier_name) : asc(ctx.db.supplier.supplier_name);
-          } else if (sort.id === "supplier_number") {
-            return sort.desc ? desc(ctx.db.supplier.supplier_number) : asc(ctx.db.supplier.supplier_number);
-          } else if (sort.id === "createdAt") {
-            return sort.desc ? desc(ctx.db.supplier.createdAt) : asc(ctx.db.supplier.createdAt);
-          }
-          return asc(ctx.db.supplier.supplier_name);
+      try {
+        // Get total count for pagination
+        const allSuppliers = await ctx.db.query.supplier.findMany();
+        const totalCount = allSuppliers.length;
+        
+        // Get paginated data with simple pagination
+        const suppliers = await ctx.db.query.supplier.findMany({
+          limit: pageSize,
+          offset: pageIndex * pageSize,
         });
+        
+        return {
+          success: true,
+          data: suppliers,
+          pageCount: Math.ceil(totalCount / pageSize),
+          message: "Suppliers retrieved successfully",
+        };
+      } catch (error) {
+        console.error("Error in getPaginatedSuppliers:", error);
+        return {
+          success: false,
+          data: [],
+          pageCount: 0,
+          message: "Error retrieving suppliers: " + (error instanceof Error ? error.message : String(error)),
+        };
       }
-      
-      // Get total count for pagination
-      const totalCount = await ctx.db.query.supplier.findMany({
-        where: whereConditions.length > 0 ? and(...whereConditions) : undefined,
-      }).then(suppliers => suppliers.length);
-      
-      // Get paginated data
-      const suppliers = await ctx.db.query.supplier.findMany({
-        where: whereConditions.length > 0 ? and(...whereConditions) : undefined,
-        orderBy,
-        limit: pageSize,
-        offset: pageIndex * pageSize,
-      });
-      
-      return {
-        success: true,
-        data: suppliers,
-        pageCount: Math.ceil(totalCount / pageSize),
-        message: "Suppliers retrieved successfully",
-      };
     }),
 
   getSupplierById: managerProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       return ctx.db.query.supplier.findFirst({
-        where: (supplier, { eq }) => eq(supplier.id, input.id),
+        where: (supplierTable, { eq }) => eq(supplierTable.id, input.id),
       });
     }),
 
@@ -98,9 +81,18 @@ export const supplierRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.insert(ctx.db.supplier).values({
-        ...input,
-        createdBy: ctx.user?.id,
+      if (!ctx.user?.id) {
+        throw new Error("User not authenticated");
+      }
+      
+      return ctx.db.insert(supplier).values({
+        supplier_name: input.supplier_name,
+        supplier_number: input.supplier_number || "",
+        createdBy: ctx.user.id,
+        contact: input.contact || "",
+        email: input.email || "",
+        phone: input.phone || "",
+        address: input.address || "",
       });
     }),
 
@@ -117,22 +109,33 @@ export const supplierRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      if (!ctx.user?.id) {
+        throw new Error("User not authenticated");
+      }
+      
       const { id, ...data } = input;
+      const updateData: Record<string, unknown> = {};
+      
+      if (data.supplier_name) updateData.supplier_name = data.supplier_name;
+      if (data.supplier_number) updateData.supplier_number = data.supplier_number;
+      if (data.contact) updateData.contact = data.contact;
+      if (data.email) updateData.email = data.email;
+      if (data.phone) updateData.phone = data.phone;
+      if (data.address) updateData.address = data.address;
+      
+      updateData.updatedBy = ctx.user.id;
+      
       return ctx.db
-        .update(ctx.db.supplier)
-        .set({
-          ...data,
-          updatedBy: ctx.user?.id,
-          updatedAt: new Date(),
-        })
-        .where(eq(ctx.db.supplier.id, id));
+        .update(supplier)
+        .set(updateData)
+        .where(eq(supplier.id, id));
     }),
 
   deleteSupplier: managerProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       return ctx.db
-        .delete(ctx.db.supplier)
-        .where(eq(ctx.db.supplier.id, input.id));
+        .delete(supplier)
+        .where(eq(supplier.id, input.id));
     }),
 }); 

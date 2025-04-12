@@ -23,6 +23,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { useState } from "react";
+import { Search } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -88,14 +89,17 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <Input
-          placeholder="Filter by supplier name..."
-          value={(table.getColumn("supplier_name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("supplier_name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+        <div className="relative w-72">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Filter by supplier name..."
+            value={(table.getColumn("supplier_name")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("supplier_name")?.setFilterValue(event.target.value)
+            }
+            className="pl-8"
+          />
+        </div>
         {addButton}
       </div>
       <div className="rounded-md border">
@@ -109,9 +113,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   );
                 })}

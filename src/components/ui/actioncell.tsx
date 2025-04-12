@@ -11,7 +11,7 @@ import ConfirmDelete from './confirmdelete';
 import toast from 'react-hot-toast';
 
 interface ActionCellProps {
-    item: 'user' | 'category' | 'supplier';
+    item: 'user' | 'category' | 'supplier' | 'stock';
     itemId: string;
     onEdit?: () => void;
     userData?: any;
@@ -23,11 +23,17 @@ const ActionCell = ({ item, itemId, onEdit, userData }: ActionCellProps) => {
 
     const mutations = {
         user: api.userRoutes.deleteUser.useMutation({
-            onSuccess: () => toast.success('User deleted successfully'),
+            onSuccess: () => {
+                utils.userRoutes.getUsers.invalidate(),
+                toast.success('User deleted successfully')
+            },
             onError: (err) => toast.error(err.message),
         }),
         category: api.partCategoryRoutes.deletePartCategory.useMutation({
-            onSuccess: () => toast.success('Category deleted successfully'),
+            onSuccess: () => {
+                utils.partCategoryRoutes.getPartCategories.invalidate();
+                toast.success('Category deleted successfully')
+            },
             onError: (err) => toast.error(err.message),
         }),
         supplier: api.supplierRoutes.deleteSupplier.useMutation({
@@ -37,6 +43,13 @@ const ActionCell = ({ item, itemId, onEdit, userData }: ActionCellProps) => {
             },
             onError: (err) => toast.error(err.message),
         }),
+        stock: api.stockRoutes.deleteStock.useMutation({
+            onSuccess : () => {
+                utils.stockRoutes.getPaginatedStocks.invalidate();
+                toast.success("Stock deleted successfully")
+            },
+            onError: (err) => toast.error(err.message),
+        })
     };
 
     const handleDelete = () => {

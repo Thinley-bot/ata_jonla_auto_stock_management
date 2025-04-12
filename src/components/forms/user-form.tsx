@@ -231,7 +231,6 @@ export default function AddUserForm({
                         {user ? 'Update an existing user.' : 'Add a new user to the system. All fields are required.'}
                     </DialogDescription>
                 </DialogHeader>
-
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

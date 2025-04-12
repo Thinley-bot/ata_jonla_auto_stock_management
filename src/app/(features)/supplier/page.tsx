@@ -32,27 +32,9 @@ export default function SupplierPage() {
       value: String(filter.value)
     })),
   });
-  
-  // Extract suppliers data and page count
+
   const suppliers = (suppliersResponse as PaginatedResponse)?.data ?? [];
   const pageCount = (suppliersResponse as PaginatedResponse)?.pageCount ?? 0;
-
-  if (suppliersLoading) {
-    return (
-      <div className="container px-4 py-5 h-full overflow-auto">
-        <DataTable 
-          columns={columns} 
-          data={[]} 
-          pageCount={0}
-          onPaginationChange={setPagination}
-          onSortingChange={setSorting}
-          onFiltersChange={setFilters}
-          isLoading={true}
-          addButton={<SupplierForm />}
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="container px-4 py-5 h-full overflow-auto">
