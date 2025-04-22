@@ -14,7 +14,6 @@ export const userRouter = createTRPCRouter({
     sortBy: z.string().optional(),
     sortOrder: z.enum(["asc", "desc"]).default("asc"),
     search: z.string().optional(),
-    roleFilter: z.string().optional(),
   })).query(async ({input}) => await getUsersImpl(input)),
 
   getUser: managerProcedure
@@ -87,9 +86,8 @@ export const userRouter = createTRPCRouter({
     }))
     .mutation(async ({ input }) => {
       try {
-        // Override the id in the database with the auth id
         const result = await db.insert(users).values({
-          id: input.id, // Explicitly set the ID from auth
+          id: input.id,
           name: input.name,
           email: input.email,
           image: input.image,

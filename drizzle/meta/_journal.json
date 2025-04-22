@@ -22,6 +22,20 @@
       "when": 1740152462227,
       "tag": "0002_smart_jack_power",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1744641028816,
+      "tag": "0003_stormy_silk_fever",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1744643673026,
+      "tag": "0004_moaning_dust",
+      "breakpoints": true
     }
   ]
 }

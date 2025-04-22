@@ -1,12 +1,11 @@
 import { randomUUID } from "crypto";
 import { createTable } from "../schema";
-import { varchar, numeric, integer, timestamp } from "drizzle-orm/pg-core";
+import { varchar, numeric, integer} from "drizzle-orm/pg-core";
 import { part_catalogue } from "./part_catalogue";
 import { supplier } from "./supplier";
 import { InferInsertModel, relations } from "drizzle-orm";
 import { timestamps } from "./columns/timestamp.helper";
 import { users } from "./users";
-import { number } from "zod";
 
 export const stock = createTable("stock", {
   id: varchar("id", { length: 255 }).notNull().primaryKey().$defaultFn(() => randomUUID()),

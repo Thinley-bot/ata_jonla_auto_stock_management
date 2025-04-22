@@ -5,11 +5,10 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
-import { DataTable } from "~/components/ui/data-table";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { SaleDetailsRow } from "./sale-details-row";
 import { Sale, getSaleColumns } from "./columns";
+import { DataTable } from "./data_table";
 
 export default function SalesPage() {
   const router = useRouter();
@@ -19,7 +18,8 @@ export default function SalesPage() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
 
-  const { data: sales = [], isLoading } = api.saleRoutes.getStockSales.useQuery();
+  const { data: sales, isLoading } = api.saleRoutes.getStockSales.useQuery();
+  console.log("This is the sales data",sales)
   const deleteSale = api.saleRoutes.deleteStockSale.useMutation({
     onSuccess: () => {
       toast.success("Sale deleted successfully");
@@ -75,23 +75,12 @@ export default function SalesPage() {
     setIsAddOpen(true);
   };
 
-  const handleCloseDetails = () => {
-    setIsDetailsOpen(false);
-    setSelectedSale(null);
-  };
-
-  const handleCloseEdit = () => {
-    setIsEditOpen(false);
-    setSelectedSale(null);
-  };
-
   const handleCloseAdd = () => {
     setIsAddOpen(false);
   };
 
   const handleSaveSale = (saleData: any) => {
     if (saleData.id) {
-      // Update existing sale
       updateSale.mutate({
         id: saleData.id,
         updates: {
@@ -100,7 +89,6 @@ export default function SalesPage() {
         },
       });
     } else {
-      // Create new sale
       createSale.mutate({
         payment_mode: saleData.payment_mode,
         total_sale: saleData.total_sale,
@@ -108,14 +96,6 @@ export default function SalesPage() {
     }
   };
 
-  // Filter sales based on search query
-  const filteredSales = (sales || []).filter((sale) => {
-    const searchLower = searchQuery.toLowerCase();
-    return (
-      (sale.payment_mode?.toLowerCase() || "").includes(searchLower) ||
-      sale.total_sale.toString().includes(searchLower)
-    );
-  }) as Sale[];
 
   const columns = getSaleColumns({
     onViewDetails: handleViewDetails,
@@ -137,48 +117,10 @@ export default function SalesPage() {
         </div>
       </div>
       
-      <DataTable<Sale, unknown>
+      <DataTable
         columns={columns}
-        data={filteredSales}
+        // data={filteredSales}
         isLoading={isLoading}
-      />
-
-      {selectedSale && (
-        <>
-          <SaleDetailsRow
-            sale={selectedSale}
-            open={isDetailsOpen}
-            onOpenChange={setIsDetailsOpen}
-            onClose={handleCloseDetails}
-            mode="view"
-          />
-          <SaleDetailsRow
-            sale={selectedSale}
-            open={isEditOpen}
-            onOpenChange={setIsEditOpen}
-            onClose={handleCloseEdit}
-            mode="edit"
-            onSaveSale={handleSaveSale}
-          />
-        </>
-      )}
-      
-      <SaleDetailsRow
-        sale={{
-          id: "",
-          payment_mode: "",
-          total_sale: 0,
-          details: [],
-          createdBy: "",
-          createdAt: new Date(),
-          updatedBy: null,
-          updatedAt: null
-        }}
-        open={isAddOpen}
-        onOpenChange={setIsAddOpen}
-        onClose={handleCloseAdd}
-        mode="edit"
-        onSaveSale={handleSaveSale}
       />
     </div>
   );

@@ -12,6 +12,7 @@ export const stock_sale_detail = createTable("stock_sale_detail", {
   sale_id: varchar("sale_id").references(() => stock_sale.id, { onDelete: "no action", onUpdate: "no action" }),
   part_id: varchar("part_id").references(() => part_catalogue.id, { onDelete: "no action", onUpdate: "no action" }),
   quantity: integer("quantity").notNull().$type<Number>(),
+  discount: numeric("discount", { precision: 10, scale: 2 }).notNull().$type<Number>(),
   sub_total: numeric("sub_total", { precision: 10, scale: 2 }).notNull().$type<Number>(),
   createdBy: varchar('created_by', { length: 255 }).notNull().references(() => users.id),
   updatedBy: varchar('updated_by', { length: 255 }).references(() => users.id),

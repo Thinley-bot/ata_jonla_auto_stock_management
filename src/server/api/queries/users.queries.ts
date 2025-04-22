@@ -1,5 +1,5 @@
 import { db } from "~/server/db";
-import { eq, gt, lt, like } from "drizzle-orm";
+import { eq, gt, lt, like, SQL } from "drizzle-orm";
 import { NewUser, users } from "~/server/db/schema/users";
 
 export const getUsersImpl = async ({
@@ -7,13 +7,11 @@ export const getUsersImpl = async ({
   cursor,
   direction,
   search,
-  roleFilter,
 }: {
   limit: number;
   cursor?: string | undefined;
   direction: "next" | "prev";
   search?: string;
-  roleFilter?: string;
 }) => {
   const baseQuery = db.query.users.findMany({
     with: {
@@ -23,8 +21,8 @@ export const getUsersImpl = async ({
         },
       },
     },
-    where: (users, { and, or, like, eq }) => {
-      const conditions = [];
+    where: (users, { and, like, eq }) => {
+      const conditions: SQL[] = [];
       
       if (cursor) {
         conditions.push(
@@ -35,14 +33,10 @@ export const getUsersImpl = async ({
       if (search) {
         conditions.push(like(users.name, `%${search}%`));
       }
-
-      if (roleFilter) {
-        conditions.push(eq(users.role_id, roleFilter));
-      }
       
       return conditions.length > 0 ? and(...conditions) : undefined;
     },
-    limit: limit + 1, // Get one extra to determine if there are more results
+    limit: limit + 1,
   });
 
   const results = await baseQuery;

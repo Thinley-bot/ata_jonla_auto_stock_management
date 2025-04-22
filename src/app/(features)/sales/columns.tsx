@@ -2,11 +2,14 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { DataTableRowActions } from "~/components/ui/data-table-row-actions";
+import ActionCell from "~/components/ui/actioncell";
 
 export interface Sale {
   id: string;
   payment_mode: string | null;
+  journal_number: string;
+  customer_name:string;
+  cid_number:string;
   total_sale: Number;
   createdBy: string;
   createdAt: Date;
@@ -28,6 +31,18 @@ export const getSaleColumns = ({
   onDelete,
 }: SaleColumnsProps): ColumnDef<Sale>[] => [
   {
+    accessorKey: "customer_name",
+    header: "Customer Name",
+  },
+  {
+    accessorKey: "CID number",
+    header: "CID Number",
+  },
+  {
+    accessorKey: "journal_number",
+    header: "Journal Number",
+  },
+  {
     accessorKey: "payment_mode",
     header: "Payment Mode",
   },
@@ -36,11 +51,7 @@ export const getSaleColumns = ({
     header: "Total Sale",
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("total_sale"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-      return formatted;
+      return amount;
     },
   },
   {
@@ -53,24 +64,7 @@ export const getSaleColumns = ({
     cell: ({ row }) => {
       const sale = row.original;
       return (
-        <DataTableRowActions
-          row={row}
-          actions={[
-            {
-              label: "View Details",
-              onClick: () => onViewDetails(sale),
-            },
-            {
-              label: "Edit",
-              onClick: () => onEdit(sale),
-            },
-            {
-              label: "Delete",
-              onClick: () => onDelete(sale.id),
-              className: "text-red-600",
-            },
-          ]}
-        />
+      <ActionCell item="sale" itemId={sale.id}/>
       );
     },
   },

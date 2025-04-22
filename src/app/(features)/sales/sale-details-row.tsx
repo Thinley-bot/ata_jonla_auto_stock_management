@@ -257,12 +257,24 @@ export function SaleDetailsRow({ open, onOpenChange, sale, onClose, mode = "edit
                           {...field} 
                           onChange={(e) => field.onChange(parseFloat(e.target.value))}
                           disabled
+                          value={field.value.toFixed(2)}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                
+                <div className="flex justify-end">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => setIsEditing(true)}
+                    className="mt-4"
+                  >
+                    + Add Item
+                  </Button>
+                </div>
 
                 <FormField
                   control={saleForm.control}
@@ -455,4 +467,4 @@ export function SaleDetailsRow({ open, onOpenChange, sale, onClose, mode = "edit
       </DialogContent>
     </Dialog>
   );
-} 
+}

@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { createTable } from "../schema";
-import { varchar } from "drizzle-orm/pg-core";
+import { numeric, varchar } from "drizzle-orm/pg-core";
 import { part_category } from "./part_category";
 import { car_brand } from "./car_brand";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
@@ -13,6 +13,7 @@ export const part_catalogue = createTable("part_catalogue", {
     part_number: varchar("part_number", { length: 255 }).notNull(),
     category_id: varchar("category_id").notNull().references(() => part_category.id, { onDelete: "restrict" }),
     brand_id: varchar("brand_id").notNull().references(() => car_brand.id, { onDelete: "restrict" }),
+    unit_price: numeric("unit_price",  { precision: 10, scale: 2 }).notNull().$type<Number>(),
     createdBy: varchar('created_by', { length: 255 }).notNull().references(()=> users.id),
     updatedBy: varchar('updated_by', { length: 255 }).references(()=> users.id),
     ...timestamps,
