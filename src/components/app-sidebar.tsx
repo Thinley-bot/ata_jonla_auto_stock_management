@@ -40,7 +40,7 @@ const data = {
       isActive: false,
       items: [
         {
-          title: "Product Categories",
+          title: "Categories",
           url: "/products/categories",
         },
         {
@@ -48,7 +48,7 @@ const data = {
           url: "/products/brands",
         },
         {
-          title: "Product Catalogue",
+          title: "Catalogue",
           url: "/products/catalogue",
         },
       ],

@@ -42,7 +42,6 @@ export const getUsersImpl = async ({
   const results = await baseQuery;
   const hasMore = results.length > limit;
   const items = results.slice(0, limit);
-  
   return {
     items,
     nextCursor: hasMore ? items[items.length - 1]?.id : undefined,

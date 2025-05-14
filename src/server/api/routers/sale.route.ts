@@ -5,7 +5,6 @@ import { handleError } from "~/server/helper/global_error";
 import { createStockSaleImpl, deleteStockSaleImpl, getStockSaleImpl, getStockSalesImpl, updateStockSaleImpl } from "../queries/sale.queries";
 import { createSaleSchema, getSalesSchema, updateSaleSchema } from "../route_schemas/sale.schema";
 
-
 export const saleRouter = createTRPCRouter({
   getStockSales: managerProcedure.input(getSalesSchema).query(async ({input}) => await getStockSalesImpl(input)),
 
@@ -25,7 +24,7 @@ export const saleRouter = createTRPCRouter({
         return handleError(error, "Failed to create stock sale");
       }
     }),
-
+    
   updateStockSale: managerProcedure.input(z.object({id: z.string({ message: "Sale ID is missing" }),updates: updateSaleSchema })).mutation(async ({ input, ctx }) => {
       if (!ctx.user?.id) return { success: false, message: "Not Authorized" };
       const { id, updates } = input;

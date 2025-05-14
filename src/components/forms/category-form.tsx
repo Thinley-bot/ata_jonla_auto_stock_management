@@ -59,7 +59,7 @@ export function CategoryForm({ isOpen, onClose, onSubmit, initialData }: Categor
       form.reset();
       onClose();
     } catch (error) {
-      // Error is handled by the mutation
+      console.log(error)
     }
   };
 

@@ -11,6 +11,7 @@ export const createSaleSchema = z.object({
     journal_number: z.string().optional(),
     customer_name: z.string().optional(),
     customer_cid: z.string().optional(),
+    customer_phone_num : z.string().min(8,{message:"The phone number should have eight digit."}),
     payment_status: z.string({message:"Please choose one payment method"}),
     total_sale: z.number().min(0, "Total sale must be a positive number"),
     total_discount: z.number().min(0, "The discount amount should be greater than 0").optional()

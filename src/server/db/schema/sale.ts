@@ -11,6 +11,7 @@
         invoice_number: varchar('invoice_number', { length: 50 }).notNull(),
         payment_mode: varchar("payment_mode", { length: 50 }).notNull(),
         journal_number: varchar("journal_number", {length: 50}),
+        customer_phone_num: varchar("customer_phone_num", {length:50}).notNull(),
         customer_name: varchar("customer_name", {length:50}),
         customer_cid: varchar("customer_cid" , {length:11}),
         payment_status: varchar("payment_status", { length: 50 }),

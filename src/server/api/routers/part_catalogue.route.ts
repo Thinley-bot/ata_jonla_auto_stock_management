@@ -38,6 +38,7 @@ export const partCatalogueRouter = createTRPCRouter({
             part_number: z.string(),
             category_id: z.string(),
             brand_id: z.string(),
+            unit_price: z.number()
         })
     ).mutation(async ({ input, ctx }) => {
         if (!ctx.user?.id) return { success: false, message: "Not Authorized" };

@@ -7,11 +7,9 @@ export const getCarBrandById = async (id: string) =>
 
 export const getCarBrands = async (search?: string) => {
     const query = db.select().from(car_brand);
-    
     if (search) {
         return await query.where(like(car_brand.brand_name, `%${search}%`));
     }
-    
     return await query;
 };
 
@@ -23,3 +21,12 @@ export const createCarBrand = async (userId: string, data: { name: string; descr
         updatedBy: userId,
     }).returning();
 };
+
+export const deleteCarBrand = async(carBrandId: string) => {
+    try {
+        await db.delete(car_brand).where(eq(car_brand.id, carBrandId)).returning()
+    }
+    catch(error){
+      return error
+    }
+}

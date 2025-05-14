@@ -2,14 +2,13 @@
 
 import { useState } from "react";
 import { columns } from "./column";
-import { DataTable } from "~/components/ui/data-table";
 import { api } from "~/trpc/react";
 import type { Category } from "./column";
 import { CategoryForm } from "~/components/forms/category-form";
-import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { CirclePlus, Search } from "lucide-react";
 import { Input } from "~/components/ui/input";
+import { DataTable } from "./data_table";
 
 export default function Page() {
   const [showAddModal, setShowAddModal] = useState(false);

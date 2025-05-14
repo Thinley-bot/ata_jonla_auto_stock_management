@@ -59,7 +59,6 @@ export default function Page() {
     refetch();
   };
   
-  // Use useMemo to create the columns array only when handleViewUser changes
   const userColumns = useMemo(() => columns(handleViewUser), [handleViewUser]);
   
   return (

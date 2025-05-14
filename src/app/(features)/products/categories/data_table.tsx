@@ -71,15 +71,6 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-        <div className="rounded-md border">
-          <div className="flex gap-2">
-            <Button variant="default" size="default" onClick={onAddNew}>
-              <CirclePlus className="mr-2 h-4 w-4" />
-              Add Category
-            </Button>
-          </div>
-
-      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>

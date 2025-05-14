@@ -4,25 +4,32 @@ import { NewSale, stock_sale } from "~/server/db/schema/sale";
 import generateInvoiceNumber from "~/server/helper/invoice_number";
 
 
-export const getStockSalesImpl = async ({limit,cursor, direction,search}:{limit:number, cursor:string, direction:string, search: string}) =>{ 
-    const baseQuery =  await db.query.stock_sale.findMany({
-    where: (stock_sale,{and, ilike, lt}) => {
-        const conditions = []
-        if(cursor) {
-            conditions.push(
-                direction === "next" ? gt(stock_sale.id,cursor) : lt(stock_sale.id,cursor)
-            )
-        }
-        if(search) {
-            conditions.push(
-                ilike(stock_sale.id,search)
-            )
-        }
-        return and(...conditions)
-    }, 
-    limit: limit+1
-});
-
+export const getStockSalesImpl = async ({ limit, cursor, direction, search }: { limit: number, cursor?: string | undefined, direction: "prev" | "next", search?: string | undefined }) => {
+    const baseQuery = await db.query.stock_sale.findMany({
+        where: (stock_sale, { and, ilike, lt }) => {
+            const conditions = []
+            if (cursor) {
+                conditions.push(
+                    direction === "next" ? gt(stock_sale.id, cursor) : lt(stock_sale.id, cursor)
+                )
+            }
+            if (search) {
+                conditions.push(
+                    ilike(stock_sale.payment_mode, search)
+                )
+            }
+            return and(...conditions)
+        },
+        limit: limit + 1
+    });
+    const results = await baseQuery;
+    const hasMore = results.length > limit;
+    const items = results.slice(0, limit);
+    return {
+        items,
+        nextCursor: hasMore ? items[items.length - 1]?.id : undefined,
+        prevCursor: cursor,
+    }
 }
 
 export const getStockSaleImpl = async (id: string) => await db.select().from(stock_sale).where(eq(stock_sale.id, id));

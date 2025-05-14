@@ -9,6 +9,7 @@ export interface Sale {
   payment_mode: string | null;
   journal_number: string;
   customer_name:string;
+  customer_phone_num:string;
   cid_number:string;
   total_sale: Number;
   createdBy: string;
@@ -16,35 +17,24 @@ export interface Sale {
   updatedBy: string | null;
   updatedAt: Date | null;
   invoice_number?: string;
-  details?: any[];
 }
 
-interface SaleColumnsProps {
-  onViewDetails: (sale: Sale) => void;
-  onEdit: (sale: Sale) => void;
-  onDelete: (id: string) => void;
-}
-
-export const getSaleColumns = ({
-  onViewDetails,
-  onEdit,
-  onDelete,
-}: SaleColumnsProps): ColumnDef<Sale>[] => [
+export const Columns: ColumnDef<Sale>[] = [
   {
-    accessorKey: "customer_name",
-    header: "Customer Name",
+    header:"ID",
+    cell: ({row}) => <div>{row.index + 1}</div>
   },
   {
-    accessorKey: "CID number",
-    header: "CID Number",
-  },
-  {
-    accessorKey: "journal_number",
-    header: "Journal Number",
+    header:"Phone Number",
+    accessorKey: "customer_phone_num"
   },
   {
     accessorKey: "payment_mode",
     header: "Payment Mode",
+  },
+  {
+    accessorKey: "journal_number",
+    header: "Journal Number",
   },
   {
     accessorKey: "total_sale",
@@ -60,12 +50,21 @@ export const getSaleColumns = ({
     cell: ({ row }) => format(new Date(row.getValue("createdAt")), "PPP"),
   },
   {
+    accessorKey: "customer_name",
+    header: "Customer Name",
+  },
+  {
+    accessorKey: "customer_cid",
+    header: "CID Number",
+  },
+  {
     id: "actions",
+    header:"Actions",
     cell: ({ row }) => {
       const sale = row.original;
       return (
-      <ActionCell item="sale" itemId={sale.id}/>
+        <ActionCell item="sale" itemId={sale.id} />
       );
     },
   },
-]; 
+];

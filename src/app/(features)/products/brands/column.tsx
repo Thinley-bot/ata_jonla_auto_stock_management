@@ -36,7 +36,7 @@ export const columns: ColumnDef<Brand>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const brandId = row.original.id;
-      return <ActionCell itemId={brandId} item="brand" />;
+      return <ActionCell itemId={brandId} item="brand"/>;
     },
   },
 ]; 

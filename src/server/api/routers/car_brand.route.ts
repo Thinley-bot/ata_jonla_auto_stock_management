@@ -1,7 +1,7 @@
 import { publicProcedure, managerProcedure } from "~/middleware/user_role_auth";
 import { createTRPCRouter } from "../trpc";
 import { z } from "zod";
-import { getCarBrandById, getCarBrands, createCarBrand } from "../queries/car_brand.queries";
+import { getCarBrandById, getCarBrands, createCarBrand, deleteCarBrand } from "../queries/car_brand.queries";
 import { handleError } from "~/server/helper/global_error";
 
 export const carBrandRouter = createTRPCRouter({
@@ -29,4 +29,11 @@ export const carBrandRouter = createTRPCRouter({
                 return handleError(error, "Failed to create brand");
             }
         }),
+        deleteCarBrand: managerProcedure
+        .input(z.object({
+          id: z.string({ message: "The brand id should be included" })
+        }))
+        .mutation(async ({ input, ctx }) => {
+          return await deleteCarBrand(input.id);
+        })
 });

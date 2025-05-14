@@ -15,7 +15,6 @@ import { CirclePlus } from "lucide-react"
 import { useState, useEffect } from "react"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
-import { useDebounce } from "~/hooks/use-debounce"
 
 import {
   Table,
@@ -44,15 +43,6 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [searchQuery, setSearchQuery] = useState("")
-  const debouncedSearch = useDebounce(searchQuery, 300)
-
-  useEffect(() => {
-    if (searchKey && debouncedSearch) {
-      setColumnFilters([{ id: searchKey, value: debouncedSearch }])
-    } else {
-      setColumnFilters([])
-    }
-  }, [debouncedSearch, searchKey])
 
   const table = useReactTable({
     data,
