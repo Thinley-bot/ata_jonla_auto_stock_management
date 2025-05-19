@@ -24,9 +24,21 @@ import { Input } from '~/components/ui/input';
 import { z } from 'zod';
 import { CirclePlus } from 'lucide-react';
 import { SaleDetailForm } from '~/components/forms/sales-detail-form';
+import { DataTable } from './data-table';
+import { columns } from './column';
+
+export interface SaleDetails {
+    part_id: string;
+    quantity: number;
+    unit_price: number;
+    discount: number;
+    sub_total: number
+}
 
 const addSale = () => {
-    const [showSaleDetail, setSaleDetail] = useState(false)
+    const [showSaleDetail, setShowSaleDetail] = useState<boolean>(false)
+    const [saleDetails, setSaleDetails] = useState<SaleDetails[]>([])
+
     const form = useForm({
         resolver: zodResolver(createSaleSchema),
         defaultValues: {
@@ -38,7 +50,6 @@ const addSale = () => {
             payment_status: "",
             total_sale: 0,
             total_discount: 0,
-            items: [],
         },
     });
 
@@ -48,9 +59,9 @@ const addSale = () => {
     return (
         <div className="container px-4 py-5 h-full overflow-auto">
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(handleSubmit)} className="flex gap-8">
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="flex gap-8 bg-white px-6 py-6 rounded-lg">
                     <div className="flex-1 space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className={`grid ${form.watch("payment_mode") === "Mobile Payment" ? 'grid-cols-3' : 'grid-cols-2'} gap-4`}>
                             <FormField
                                 control={form.control}
                                 name="payment_mode"
@@ -86,6 +97,21 @@ const addSale = () => {
                                     </FormItem>
                                 )}
                             />
+                            {form.watch("payment_mode") === "Mobile Payment" && <FormField
+                                control={form.control}
+                                name="journal_number"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Journal Number</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Journal Number" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            }
+
                         </div>
 
                         {form.watch("payment_mode") === "Credit" && (
@@ -126,37 +152,54 @@ const addSale = () => {
                                 />
                             </div>
                         )}
-                        {form.watch("payment_mode") === "Mobile Payment" && <FormField
-                            control={form.control}
-                            name="journal_number"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Journal Number</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Journal Number" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        }
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="total_discount"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Total Discount</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Total Discount" {...field} disabled />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="total_sale"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Total Sale Amount</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Total Sale Amount" {...field} disabled />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
                     </div>
                 </form>
                 <Button
                     type="button"
                     variant="outline"
                     className="mt-4"
-                    onClick={()=>setSaleDetail(true)}
+                    onClick={() => setShowSaleDetail(true)}
                 >
                     <CirclePlus /> Add Item
                 </Button>
+                <DataTable columns={columns} data={saleDetails} />
+
                 <div className="mt-6 w-full flex justify-end">
                     <Button type="submit" className="w-32">
                         Create Sale
                     </Button>
                 </div>
             </Form>
-            {showSaleDetail ? <SaleDetailForm isOpen={showSaleDetail} onClose={() => setSaleDetail(false)}/> : ""}
+            {showSaleDetail ? <SaleDetailForm isOpen={showSaleDetail} onClose={() => setShowSaleDetail(false)} setSaleDetails={setSaleDetails} /> : ""}
         </div>
     )
 }

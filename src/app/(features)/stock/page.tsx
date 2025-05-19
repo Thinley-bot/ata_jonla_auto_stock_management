@@ -36,7 +36,6 @@ export default function StockPage() {
     })),
   });
   
-  // Extract stocks data and page count
   const stocks = (stocksResponse as PaginatedResponse)?.data ?? [];
   const pageCount = (stocksResponse as PaginatedResponse)?.pageCount ?? 0;
   
