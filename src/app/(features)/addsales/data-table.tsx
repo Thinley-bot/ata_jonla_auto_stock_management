@@ -5,9 +5,6 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  SortingState,
-  ColumnFiltersState,
-  PaginationState,
 } from "@tanstack/react-table";
 
 import {
@@ -38,7 +35,7 @@ export function DataTable<TData, TValue>({
   console.log("oii",data)
 
   return (
-      <div className="rounded-md border">
+      <div className="rounded-md border mt-4">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

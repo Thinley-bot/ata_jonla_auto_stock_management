@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createSaleSchema } from '~/form_schema/addSale';
@@ -52,6 +52,22 @@ const addSale = () => {
             total_discount: 0,
         },
     });
+
+    const getTotals = () => {
+        const totals = saleDetails.reduce((acc, sale) => {
+           acc.totalSale += sale.sub_total;
+           acc.totalDiscount += sale.discount;
+           return acc;
+        } , {totalSale: 0 , totalDiscount: 0});
+        return totals
+    }
+
+    useEffect(() => {
+        const totalSaleDiscount = getTotals()
+        form.setValue("total_sale",totalSaleDiscount?.totalSale)
+        form.setValue("total_discount", totalSaleDiscount?.totalDiscount)
+    }
+    ,[saleDetails])
 
     const handleSubmit = (values: z.infer<typeof createSaleSchema>) => {
         console.log(values)
@@ -183,6 +199,7 @@ const addSale = () => {
                         </div>
                     </div>
                 </form>
+                <div className="px-6 py-6 rounded-lg bg-white mt-3">
                 <Button
                     type="button"
                     variant="outline"
@@ -192,11 +209,11 @@ const addSale = () => {
                     <CirclePlus /> Add Item
                 </Button>
                 <DataTable columns={columns} data={saleDetails} />
-
                 <div className="mt-6 w-full flex justify-end">
                     <Button type="submit" className="w-32">
                         Create Sale
                     </Button>
+                </div>
                 </div>
             </Form>
             {showSaleDetail ? <SaleDetailForm isOpen={showSaleDetail} onClose={() => setShowSaleDetail(false)} setSaleDetails={setSaleDetails} /> : ""}
