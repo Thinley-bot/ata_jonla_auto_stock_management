@@ -5,12 +5,10 @@ import { handleError } from "~/server/helper/global_error";
 import { deleteStockSaleDetailImpl, getStockSaleDetailImpl, getStockSaleDetailsImpl, newStockSaleDetailImpl, updateStockSaleDetailImpl } from "../queries/sale_detail.queries";
 
 export const saleDetailRouter = createTRPCRouter({
-    // Get all stock sale details
     getStockSaleDetails: managerProcedure.query(async () => {
         return await getStockSaleDetailsImpl();
     }),
 
-    // Get single stock sale detail by ID
     getStockSaleDetail: managerProcedure
         .input(z.string())
         .query(async ({ input }) => {
@@ -21,12 +19,12 @@ export const saleDetailRouter = createTRPCRouter({
             return detail;
         }),
 
-    // Create new stock sale detail
     createStockSaleDetail: managerProcedure
         .input(z.object({
             sale_id: z.string().optional(),
             part_id: z.string().optional(),
             quantity: z.number().min(0,{message:"The quantity cannot be zero"}),
+            discount: z.number().min(0,{message:"The discount cannot be less than zero"}),
             sub_total:  z.number().min(0,{message:"The subtotal cannot be zero."}),
         }))
         .mutation(async ({ input, ctx }) => {
@@ -45,7 +43,6 @@ export const saleDetailRouter = createTRPCRouter({
             }
         }),
 
-    // Update existing stock sale detail
     updateStockSaleDetail: managerProcedure
         .input(z.object({
             id: z.string({ message: "Stock sale detail ID is required" }),
@@ -78,7 +75,6 @@ export const saleDetailRouter = createTRPCRouter({
             }
         }),
 
-    // Delete stock sale detail
     deleteStockSaleDetail: managerProcedure
         .input(z.object({ 
             id: z.string() 

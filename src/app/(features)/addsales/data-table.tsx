@@ -32,8 +32,6 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
   });
 
-  console.log("oii",data)
-
   return (
       <div className="rounded-md border mt-4">
         <Table>
@@ -78,7 +76,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No sales recorded
                 </TableCell>
               </TableRow>
             )}

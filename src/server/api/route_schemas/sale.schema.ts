@@ -7,12 +7,14 @@ export const getSalesSchema = z.object({
 })
 
 export const createSaleSchema = z.object({
-    payment_mode: z.string().min(1, "Payment mode is required"),
+    payment_mode: z.enum(["Cash","Mobile Payment", "Credit"], {
+      required_error:"Payment mode is required"
+    }),
     journal_number: z.string().optional(),
     customer_name: z.string().optional(),
     customer_cid: z.string().optional(),
     customer_phone_num : z.string().min(8,{message:"The phone number should have eight digit."}),
-    payment_status: z.string({message:"Please choose one payment method"}),
+    payment_status: z.string().optional(),
     total_sale: z.number().min(0, "Total sale must be a positive number"),
     total_discount: z.number().min(0, "The discount amount should be greater than 0").optional()
   });

@@ -24,8 +24,6 @@ export const createSaleSchema = z.object({
     .number()
     .min(0, "The discount amount should be greater than 0")
     .default(0),
-  items: z.array(itemsSchema)
-    .min(1, { message: "At least one item is required" })
 }).superRefine((data, ctx) => {
   if (data.payment_mode === "Credit" && !data.payment_status) {
     ctx.addIssue({

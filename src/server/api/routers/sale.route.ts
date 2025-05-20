@@ -18,7 +18,7 @@ export const saleRouter = createTRPCRouter({
         return { 
           success: true, 
           message: "Stock sale and details successfully created",
-          data: result
+          data: result?.id
         };
       } catch (error) {
         return handleError(error, "Failed to create stock sale");
