@@ -51,7 +51,7 @@ const ActionCell = ({ item, itemId, onEdit}: ActionCellProps) => {
         }),
         sale: api.saleRoutes.deleteStockSale.useMutation({
             onSuccess: () => {
-                utils.saleRoutes.getStockSales.invalidate()
+                utils.saleRoutes.getStockSales.invalidate();
                 toast.success("Sale record deleted successfully")
             },
             onError: (err) => toast.error(err.message)

@@ -2,6 +2,7 @@
 import React from 'react'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './ui/breadcrumb'
 import { usePathname } from 'next/navigation'
+import { ChevronRight } from 'lucide-react';
 
 const Breadcrum = () => {
     const pathUrl = usePathname();
@@ -19,7 +20,7 @@ const Breadcrum = () => {
                                 {isLastPath ? (
                                     <BreadcrumbPage>{upperCaseSegment}</BreadcrumbPage>
                                 ) : (
-                                    <BreadcrumbLink href={href}>{upperCaseSegment}</BreadcrumbLink>
+                                    <BreadcrumbLink className='flex flex-row justify-center items-center gap-3 '>{upperCaseSegment}<ChevronRight className='h-4 w-4' color='#000'/></BreadcrumbLink>
                                 )}
                             </BreadcrumbItem>
                         </React.Fragment>
