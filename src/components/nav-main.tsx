@@ -12,7 +12,6 @@ import {
 } from "~/components/ui/collapsible"
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -37,9 +36,7 @@ export function NavMain({
 }) {
   const pathname = usePathname();
   
-  // Track which items are open
   const [openItems, setOpenItems] = useState<Record<string, boolean>>(() => {
-    // Initialize with items that have isActive set to true
     const initial: Record<string, boolean> = {};
     items.forEach(item => {
       if (item.isActive) {
@@ -49,7 +46,6 @@ export function NavMain({
     return initial;
   });
 
-  // Toggle open state for an item
   const toggleItem = useCallback((title: string) => {
     setOpenItems(prev => ({
       ...prev,
@@ -57,14 +53,11 @@ export function NavMain({
     }));
   }, []);
 
-  // Update open state based on current path
   useEffect(() => {
-    // Only run this effect when pathname changes
     const newOpenItems: Record<string, boolean> = { ...openItems };
     let hasChanges = false;
     
     items.forEach(item => {
-      // Check if current path matches this item or any of its sub-items
       const isActive = pathname === item.url || 
         item.items?.some(subItem => pathname === subItem.url) ||
         item.items?.some(subItem => pathname.startsWith(subItem.url + '/'));
@@ -75,7 +68,6 @@ export function NavMain({
       }
     });
     
-    // Only update state if there are actual changes
     if (hasChanges) {
       setOpenItems(newOpenItems);
     }
@@ -83,7 +75,6 @@ export function NavMain({
 
   return (
     <SidebarGroup>
-      {/* <SidebarGroupLabel>Platform</SidebarGroupLabel> */}
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.title}>
@@ -111,7 +102,7 @@ export function NavMain({
                   <SidebarMenuSub>
                     {item.items?.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
-                        <SidebarMenuSubButton asChild>
+                        <SidebarMenuSubButton asChild className={`${pathname.startsWith(subItem.url) ? "bg-gray-200" : ""}`}>
                           <Link href={subItem.url}>
                             <span>{subItem.title}</span>
                           </Link>
