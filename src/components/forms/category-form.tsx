@@ -6,7 +6,7 @@ import * as z from "zod";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-
+import { categoryFormSchema } from "~/form_schema/category-form";
 import {
   Form,
   FormControl,
@@ -15,65 +15,55 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form";
+import { api } from "~/trpc/react";
+import toast from "react-hot-toast";
 
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  description: z.string().min(2, {
-    message: "Description must be at least 2 characters.",
-  }),
-  unit: z.string().min(1, {
-    message: "Unit is required.",
-  }),
-});
 
 interface CategoryFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: { id?: string; name: string; description: string; unit: string }) => Promise<void>;
-  initialData?: {
-    id: string;
-    name: string;
-    description: string;
-    unit: string;
-  } | null;
 }
 
-export function CategoryForm({ isOpen, onClose, onSubmit, initialData }: CategoryFormProps) {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+export function CategoryForm({ isOpen, onClose}: CategoryFormProps) {
+  const  utils = api.useUtils()
+  const form = useForm<z.infer<typeof categoryFormSchema>>({
+    resolver: zodResolver(categoryFormSchema),
     defaultValues: {
-      name: initialData?.name ?? "",
-      description: initialData?.description ?? "",
-      unit: initialData?.unit ?? "",
+      category_name:"",
+      category_desc: "",
+      unit:"",
     },
   });
 
-  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+  const createCategory = api.partCategoryRoutes.createPartCategory.useMutation({
+    onSuccess: () => {
+      toast.success("The category created successfully.")
+      utils.partCategoryRoutes.getPartCategories.invalidate();
+    }
+   })
+
+  const handleSubmit = async (values: z.infer<typeof categoryFormSchema>) => {
     try {
-      await onSubmit({
-        id: initialData?.id,
-        ...values,
-      });
+      createCategory.mutate(values)
       form.reset();
       onClose();
     } catch (error) {
       console.log(error)
     }
   };
+  
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{initialData ? "Edit Category" : "Create Category"}</DialogTitle>
+          <DialogTitle>Create Category</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="name"
+              name="category_name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Name</FormLabel>
@@ -86,7 +76,7 @@ export function CategoryForm({ isOpen, onClose, onSubmit, initialData }: Categor
             />
             <FormField
               control={form.control}
-              name="description"
+              name="category_desc"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
@@ -115,7 +105,7 @@ export function CategoryForm({ isOpen, onClose, onSubmit, initialData }: Categor
                 Cancel
               </Button>
               <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Saving..." : initialData ? "Update" : "Create"}
+                {form.formState.isSubmitting ? "Saving..." : "Create"}
               </Button>
             </div>
           </form>
