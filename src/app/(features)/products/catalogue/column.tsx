@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import ActionCell from "~/components/ui/actioncell";
 
 export type Product = {
   id: string;
@@ -29,8 +30,10 @@ interface ColumnProps {
 
 export const createColumns = (props: ColumnProps): ColumnDef<Product>[] => [
   {
-    accessorKey: "id",
     header: "ID",
+    cell: ({row}) => (
+      <p>{row.index + 1}</p>
+    )
   },
   {
     accessorKey: "name",
@@ -76,32 +79,8 @@ export const createColumns = (props: ColumnProps): ColumnDef<Product>[] => [
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const item = row.original;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {props.onEdit && (
-              <DropdownMenuItem onClick={() => props.onEdit?.(item)}>
-                View/Edit
-              </DropdownMenuItem>
-            )}
-            {props.onDelete && (
-              <DropdownMenuItem 
-                onClick={() => props.onDelete?.(item.id)}
-                className="text-red-600"
-              >
-                Delete
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+      const brandId = row.original.id;
+      return <ActionCell itemId={brandId} item="catalogue"/>;
     },
   },
 ]; 

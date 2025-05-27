@@ -12,8 +12,10 @@ export type Brand = {
 
 export const columns: ColumnDef<Brand>[] = [
   {
-    accessorKey: "id",
     header: "ID",
+    cell: ({row})=>(
+      <p>{row.index + 1}</p>
+    )
   },
   {
     accessorKey: "name",

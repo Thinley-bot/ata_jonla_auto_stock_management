@@ -15,6 +15,12 @@ export type Category = {
 
 export const columns: ColumnDef<Category>[] = [
   {
+    header: "SI",
+    cell : ({row})=>(
+      <p>{row.index + 1}</p>
+    )
+  },
+  {
     accessorKey: "category_name",
     header: "Name",
   },

@@ -1,12 +1,11 @@
 "use client";
-
 import { useState } from "react";
 import { api } from "~/trpc/react";
 import { createColumns } from "./column";
 import { DataTable } from "./data_table";
 import CatalogueForm from "~/components/forms/catalogue-form";
 import { Button } from "~/components/ui/button";
-import { Plus, Search } from "lucide-react";
+import { CirclePlus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "~/components/ui/input";
 
@@ -102,7 +101,7 @@ export default function ProductCataloguePage() {
           />
         </div>
         <Button onClick={() => setIsOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
+          <CirclePlus className="mr-2 h-4 w-4" />
           Add New Part
         </Button>
       </div>
@@ -124,4 +123,4 @@ export default function ProductCataloguePage() {
       )}
     </div>
   );
-} 
+}

@@ -11,7 +11,7 @@ import ConfirmDelete from './confirmdelete';
 import toast from 'react-hot-toast';
 
 interface ActionCellProps {
-    item: 'user' | 'category' | 'supplier' | 'stock' | 'sale' | 'brand';
+    item: 'user' | 'category' | 'catalogue' | 'supplier' | 'stock' | 'sale' | 'brand';
     itemId: string;
     onEdit?: () => void;
 }
@@ -34,6 +34,12 @@ const ActionCell = ({ item, itemId, onEdit}: ActionCellProps) => {
                 toast.success('Category deleted successfully')
             },
             onError: (err) => toast.error(err.message),
+        }),
+        catalogue: api.partCatalogueRoutes.deletePartCatalogue.useMutation({
+            onSuccess: () => {
+                utils.partCatalogueRoutes.getPartCatalogues.invalidate();
+                toast.success("Catalogue deleted sucessfully")
+            }
         }),
         supplier: api.supplierRoutes.deleteSupplier.useMutation({
             onSuccess: () => {

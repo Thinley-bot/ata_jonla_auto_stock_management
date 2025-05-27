@@ -7,6 +7,9 @@ import { DataTable } from "./data_table";
 import { toast } from "sonner";
 import { BrandForm } from "~/components/forms/brand-form";
 import { useDebounce } from "~/hooks/use-debounce";
+import { CirclePlus, Search } from "lucide-react";
+import { Input } from "~/components/ui/input";
+import { Button } from "~/components/ui/button";
 
 export default function CarBrandsPage() {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,14 +44,26 @@ export default function CarBrandsPage() {
 
   return (
     <div className="container px-4 py-5">
-      <DataTable 
-        columns={columns} 
+      <div className="flex items-center justify-between mb-2">
+        <div className="relative w-72">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search car brands..."
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            className="pl-8"
+          />
+        </div>
+       <Button onClick={() => setIsOpen(true)}>
+          <CirclePlus className="mr-2 h-4 w-4" />
+          Add New Brand
+        </Button>
+      </div>
+      <DataTable
+        columns={columns}
         data={formattedData}
-        searchKey="name"
         isLoading={isLoading}
-        onAddNew={() => setIsOpen(true)}
       />
-
       <BrandForm
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}

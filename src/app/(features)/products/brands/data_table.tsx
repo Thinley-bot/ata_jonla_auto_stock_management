@@ -11,10 +11,8 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
 } from "@tanstack/react-table"
-import { CirclePlus } from "lucide-react"
-import { useState, useEffect } from "react"
+import { useState} from "react"
 import { Button } from "~/components/ui/button"
-import { Input } from "~/components/ui/input"
 
 import {
   Table,
@@ -28,21 +26,16 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  searchKey?: string
   isLoading?: boolean
-  onAddNew?: () => void
 }
 
 export function DataTable<TData, TValue>({ 
   columns, 
   data,
-  searchKey,
   isLoading = false,
-  onAddNew
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [searchQuery, setSearchQuery] = useState("")
 
   const table = useReactTable({
     data,
@@ -61,25 +54,6 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between py-2">
-        {searchKey && (
-          <div className="flex-1 max-w-sm">
-            <Input
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-            />
-          </div>
-        )}
-        {onAddNew && (
-          <div className="ml-4">
-            <Button variant="default" size="default" onClick={onAddNew}>
-              <CirclePlus className="mr-2 h-4 w-4" />
-              Add Brand
-            </Button>
-          </div>
-        )}
-      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
