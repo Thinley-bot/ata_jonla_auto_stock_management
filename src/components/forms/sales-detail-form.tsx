@@ -24,23 +24,23 @@ import { cn } from "~/lib/utils";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { itemsSchema } from "~/form_schema/addSale";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { SaleDetails } from "~/app/(features)/addsales/page";
 
 interface SalesFormProps {
   isOpen: boolean;
   onClose: () => void;
-  setSaleDetails: React.Dispatch<React.SetStateAction<SaleDetails[]>>
+  onSave?: (data: any) => void;
 }
 
 export function SaleDetailForm({
   isOpen,
   onClose,
-  setSaleDetails
+  onSave,
 }: SalesFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   const form = useForm({
     resolver: zodResolver(itemsSchema),
@@ -59,33 +59,55 @@ export function SaleDetailForm({
 
   useEffect(() => {
     if (error || (productResponse && !isProductResponseSuccess)) {
-      toast.error(error?.message || productResponse?.message || "Failed to load products")
+      toast.error( error?.message || productResponse?.message || "Failed to load products")
     }
   }, [error, productResponse, isProductResponseSuccess]);
 
   useEffect(() => {
-    const unitPrice = form.getValues("unit_price")
-    const quantity = form.getValues("quantity")
-    const discount = form.getValues("discount")
-    const subTotal = discount ? (unitPrice * quantity) - discount : unitPrice * quantity;
-    form.setValue("sub_total", subTotal)
-  }, [form.getValues("quantity"), form.getValues("discount")])
+    const filtered = products.filter((product) =>
+      product.part_name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredProducts(filtered);
+  }, [searchQuery, products]);
+
+  useEffect(() => {
+    const calculateSubtotal = () => {
+      const values = form.getValues();
+      const quantity = Number(values.quantity) || 0;
+      const unitPrice = Number(values.unit_price) || 0;
+      const discount = Number(values.discount) || 0;
+      
+      if (quantity > 0 && unitPrice > 0) {
+        const subtotal = (quantity * unitPrice) - discount;
+        form.setValue("sub_total", subtotal > 0 ? subtotal : 0, { 
+          shouldValidate: true,
+          shouldDirty: false
+        });
+      }
+    };
+
+    const fields = ["quantity", "unit_price", "discount"];
+    fields.forEach(field => {
+      form.register(field, {
+        onChange: () => calculateSubtotal()
+      });
+    });
+  }, [form]);
+
+  const handleProductSelect = (productId: string) => {
+    form.setValue("part_id", productId);
+    const selectedProduct = products.find(product => product.id === productId);
+    if (selectedProduct) {
+      form.setValue("unit_price", Number(selectedProduct.unit_price));
+    }
+  };
 
   const handleSubmit = (data: any) => {
     setIsSubmitting(true);
     try {
-      console.log("This is data", data);
-
-      setSaleDetails((prev) => {
-        const isDuplicate = prev.some(item => item.part_id === data.part_id);
-        if (isDuplicate) {
-          toast("The part_id is already added");
-          return prev;
-        }
-
-        return [...prev, data];
-      });
-
+      if (onSave) {
+        onSave(data);
+      }
       form.reset();
       onClose();
     } catch (error) {
@@ -93,22 +115,13 @@ export function SaleDetailForm({
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-
-  const onPartSelect = (productId: string) => {
-    form.setValue("part_id", productId)
-    const selectedPart = products.find((product) => product.id === productId);
-    if (selectedPart) {
-      form.setValue("unit_price", Number(selectedPart.unit_price))
-    }
   }
-
+  
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-5xl">
         <DialogHeader>
-          <DialogTitle>Sale Detail</DialogTitle>
+          <DialogTitle>Create New Sale Detail</DialogTitle>
         </DialogHeader>
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
@@ -126,7 +139,7 @@ export function SaleDetailForm({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Product</FormLabel>
-                        <Popover modal={false}>
+                        <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
                               <Button
@@ -148,33 +161,38 @@ export function SaleDetailForm({
                             </FormControl>
                           </PopoverTrigger>
                           <PopoverContent className="w-full min-w-[var(--radix-popover-trigger-width)]">
-                            <Command>
-                              <CommandInput
-                                placeholder="Search products..."
-                                className="h-9"
+                            <Command className="z-50">
+                              <CommandInput 
+                                placeholder="Search products..." 
+                                className="h-9" 
                                 value={searchQuery}
                                 onValueChange={setSearchQuery}
+                                autoFocus
                               />
                               <CommandList>
                                 <CommandEmpty>No product found.</CommandEmpty>
                                 <CommandGroup>
-                                  {products.map((product) => (
-                                    <CommandItem
-                                      key={product.id}
-                                      value={product.part_name}
-                                      onSelect={() => onPartSelect(product.id)}
-                                    >
-                                      <div className="flex justify-between w-full">
-                                        <span>{product.part_name}</span>
-                                      </div>
-                                      <Check
-                                        className={cn(
-                                          "ml-auto",
-                                          product.id === field.value ? "opacity-100" : "opacity-0"
-                                        )}
-                                      />
-                                    </CommandItem>
-                                  ))}
+                                  {filteredProducts.map((product) => (
+                                      <CommandItem
+                                        key={product.id}
+                                        value={product.part_name}
+                                        onSelect={() => {
+                                          handleProductSelect(product.id);
+                                          setSearchQuery("");
+                                        }}
+                                      >
+                                        <div className="flex justify-between w-full">
+                                          <span>{product.part_name}</span>
+                                          <span className="text-muted-foreground">${Number(product.unit_price || 0).toFixed(2)}</span>
+                                        </div>
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            product.id === field.value ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                    ))}
                                 </CommandGroup>
                               </CommandList>
                             </Command>
@@ -191,14 +209,14 @@ export function SaleDetailForm({
                       <FormItem>
                         <FormLabel>Unit Price</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="Unit Price"
-                            {...field}
+                          <Input 
+                            type="number" 
+                            placeholder="Unit Price" 
+                            {...field} 
                             onChange={(e) => {
                               field.onChange(Number(e.target.value));
                             }}
-                            disabled
+                            disabled={isSubmitting}
                           />
                         </FormControl>
                         <FormMessage />
@@ -214,13 +232,13 @@ export function SaleDetailForm({
                       <FormItem>
                         <FormLabel>Quantity</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="Enter quantity"
-                            {...field}
+                          <Input 
+                            type="number" 
+                            min="1"
+                            placeholder="Enter quantity" 
+                            {...field} 
                             onChange={(e) => {
-                              const val = e.target.value;
-                              field.onChange(val === "" ? "" : Number(val));
+                              field.onChange(Number(e.target.value));
                             }}
                             disabled={isSubmitting}
                           />
@@ -236,14 +254,13 @@ export function SaleDetailForm({
                       <FormItem>
                         <FormLabel>Discount</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
+                          <Input 
+                            type="number" 
                             min="0"
-                            placeholder="Enter discount"
-                            {...field}
+                            placeholder="Enter discount" 
+                            {...field} 
                             onChange={(e) => {
-                              const val = e.target.value;
-                              field.onChange(val === "" ? "" : Number(val));
+                              field.onChange(Number(e.target.value));
                             }}
                             disabled={isSubmitting}
                           />
@@ -260,11 +277,11 @@ export function SaleDetailForm({
                     <FormItem>
                       <FormLabel>Subtotal</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          readOnly
-                          className="bg-muted"
-                          {...field}
+                        <Input 
+                          type="number" 
+                          readOnly 
+                          className="bg-muted" 
+                          {...field} 
                           value={field.value}
                         />
                       </FormControl>

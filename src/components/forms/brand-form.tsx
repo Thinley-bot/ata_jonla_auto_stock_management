@@ -16,12 +16,14 @@ interface BrandFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: { name: string; description: string }) => void;
+  initialData?: { name: string; description: string };
+  mode?: "create" | "edit";
 }
 
-export function BrandForm({ isOpen, onClose, onSubmit }: BrandFormProps) {
+export function BrandForm({ isOpen, onClose, onSubmit, initialData, mode = "create" }: BrandFormProps) {
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
+    name: initialData?.name || "",
+    description: initialData?.description || "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -41,7 +43,7 @@ export function BrandForm({ isOpen, onClose, onSubmit }: BrandFormProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Brand</DialogTitle>
+          <DialogTitle>{mode === "create" ? "Add New Brand" : "Edit Brand"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -64,11 +66,13 @@ export function BrandForm({ isOpen, onClose, onSubmit }: BrandFormProps) {
               className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
           </div>
-          <Button type="submit" className="w-full">
-            Create Brand
+          <div className="flex justify-end">
+          <Button type="submit">
+            {mode === "create" ? "Create Brand" : "Update Brand"}
           </Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
   );
-} 
+}

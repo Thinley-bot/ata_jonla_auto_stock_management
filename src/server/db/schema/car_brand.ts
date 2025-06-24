@@ -1,7 +1,7 @@
 import { timestamp, varchar } from "drizzle-orm/pg-core";
 import { createTable } from "../schema";
 import { randomUUID } from "crypto";
-import { relations } from "drizzle-orm";
+import { InferInsertModel, relations } from "drizzle-orm";
 import { timestamps } from "./columns/timestamp.helper";
 import { users } from "./users";
 import { part_catalogue } from "./part_catalogue";
@@ -26,3 +26,5 @@ export const car_brand_relations = relations(car_brand,({many,one}) => ({
         references: [users.id], 
       }),
 }))
+
+export type CarBrand = Omit<InferInsertModel<typeof car_brand>, "id" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy">

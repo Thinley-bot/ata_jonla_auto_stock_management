@@ -1,6 +1,6 @@
 import { db } from "~/server/db";
 import { eq, like } from "drizzle-orm";
-import { car_brand } from "~/server/db/schema/car_brand";
+import { car_brand, CarBrand } from "~/server/db/schema/car_brand";
  
 export const getCarBrandById = async (id: string) =>  
     await db.select().from(car_brand).where(eq(car_brand.id, id));
@@ -29,4 +29,8 @@ export const deleteCarBrand = async(carBrandId: string) => {
     catch(error){
       return error
     }
+}
+
+export const updateCarBrand = async(brandId : string, carBrand : Partial<CarBrand>, userId : string) => {
+        await db.update(car_brand).set({updatedBy : userId, ...carBrand}).where(eq(car_brand.id, brandId))
 }

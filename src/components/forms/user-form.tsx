@@ -352,7 +352,7 @@ export default function AddUserForm({
                                             }}
                                         />
                                     </FormControl>
-                                    {imagePreview && (
+                                    {imagePreview ? (
                                         <div className="mt-2">
                                             <Image
                                                 width={200}
@@ -362,6 +362,8 @@ export default function AddUserForm({
                                                 className="rounded-full object-cover"
                                             />
                                         </div>
+                                    ) : (
+                                        <p className="text-red-400">User image is not available</p>
                                     )}
                                     <FormMessage />
                                 </FormItem>

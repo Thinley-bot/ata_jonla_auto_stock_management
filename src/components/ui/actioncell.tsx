@@ -8,17 +8,28 @@ import {
 import { Ellipsis } from 'lucide-react';
 import { api } from '~/trpc/react';
 import ConfirmDelete from './confirmdelete';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
+import { BrandForm } from '../forms/brand-form';
 
 interface ActionCellProps {
     item: 'user' | 'category' | 'catalogue' | 'supplier' | 'stock' | 'sale' | 'brand';
     itemId: string;
-    onEdit?: () => void;
+    data?: any;
 }
 
-const ActionCell = ({ item, itemId, onEdit}: ActionCellProps) => {
-    const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false)
+const ActionCell = ({ item, itemId, data }: ActionCellProps) => {
+    const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
     const utils = api.useUtils();
+
+    const updateBrand = api.carBrandRoutes..useMutation({
+        onSuccess: () => {
+            utils.carBrandRoutes.getCarBrands.invalidate();
+            setIsEditOpen(false);
+            toast.success("Brand updated successfully");
+        },
+        onError: (err) => toast.error(err.message),
+    });
 
     const mutations = {
         user: api.userRoutes.deleteUser.useMutation({
@@ -71,14 +82,16 @@ const ActionCell = ({ item, itemId, onEdit}: ActionCellProps) => {
         })
     };
     const handleDelete = () => {
-        try {
-            mutations[item].mutate({ id: itemId });
-            utils.userRoutes.getUsers.invalidate()
-        } catch (error) {
-            console.log(error)
-        } finally {
+            mutations[item].mutate({ id: itemId })
             setConfirmDeleteDialog(false)
-        }
+    };
+
+    const handleUpdateBrand = (formData: { name: string; description: string }) => {
+        updateBrand.mutate({
+            id: itemId,
+            brand_name: formData.name,
+            brand_desc: formData.description,
+        });
     };
 
     return (
@@ -88,10 +101,22 @@ const ActionCell = ({ item, itemId, onEdit}: ActionCellProps) => {
                     <Ellipsis className="h-4 w-4" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                    <DropdownMenuItem onClick={onEdit}>View</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => item === 'brand' && setIsEditOpen(true)}>View</DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setConfirmDeleteDialog(true)}>Delete</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
+            {item === 'brand' && (
+                <BrandForm
+                    isOpen={isEditOpen}
+                    onClose={() => setIsEditOpen(false)}
+                    onSubmit={handleUpdateBrand}
+                    initialData={{
+                        name: data?.name,
+                        description: data?.description,
+                    }}
+                    mode="edit"
+                />
+            )}
             <ConfirmDelete isOpen={confirmDeleteDialog} setIsOpen={setConfirmDeleteDialog} item={item} handleDelete={handleDelete} />
         </>
     );

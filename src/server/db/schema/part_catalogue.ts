@@ -39,4 +39,4 @@ export const part_catalogue_relations = relations(part_catalogue, ({ one }) => (
 }))
 
 export type PartCatalogue = InferSelectModel<typeof part_catalogue>;
-export type NewPartCatalogue = Omit<InferInsertModel<typeof part_catalogue>,"id" | "createdAt" | "updatedAt" | "createdBy">;
+export type NewPartCatalogue = Omit<InferInsertModel<typeof part_catalogue>,"id" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy">;

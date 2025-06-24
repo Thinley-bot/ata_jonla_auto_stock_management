@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "~/co
 import { cn } from "~/lib/utils"
 import { Input } from "~/components/ui/input"
 import { useForm } from "react-hook-form"
-import Image from "next/image"
 import { useState } from "react"
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form"
@@ -15,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { authClient } from "~/lib/auth-client"
 import { Checkbox } from "./ui/checkbox"
 import toast from "react-hot-toast"
+import { LoaderCircle} from 'lucide-react';
 
 export function LoginForm({className,...props}: React.ComponentPropsWithoutRef<"div">) {
   const [isLoading, setIsLoading] = useState(false)
@@ -52,12 +52,6 @@ export function LoginForm({className,...props}: React.ComponentPropsWithoutRef<"
     
   return (
     <div className={cn("flex flex-col gap-6 relative", className)} {...props}>
-      {isLoading && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-        </div>
-      )}
-      
       <Card className="w-full max-w-md mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
@@ -118,8 +112,8 @@ export function LoginForm({className,...props}: React.ComponentPropsWithoutRef<"
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Processing..." : "Login"}
+              <Button type="submit" className="w-full">
+                {isLoading ? <LoaderCircle color="white" className="animate-spin"/> : "Login"}
               </Button>
               <div className="mt-4 text-center text-sm">
                 Don&apos;t have an account? Consult Admin

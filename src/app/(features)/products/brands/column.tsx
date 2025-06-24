@@ -37,8 +37,8 @@ export const columns: ColumnDef<Brand>[] = [
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const brandId = row.original.id;
-      return <ActionCell itemId={brandId} item="brand"/>;
+      const brand = row.original;
+      return <ActionCell itemId={brand.id} item="brand" data={brand}/>;
     },
   },
-]; 
+];
