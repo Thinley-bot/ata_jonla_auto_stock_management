@@ -39,28 +39,29 @@ const enforceRoles = (requiredRoles: string[]) => t.middleware(async ({ ctx, nex
       throw new AuthorizationError("Unauthorized: User or role not found.");
     }
 
-    const roleName = userWithRole.role.role_name;
-    console.log("this is the role",roleName)
+    const roleName = userWithRole.role.role_name ? userWithRole.role.role_name : "";
 
     if (!requiredRoles.includes(roleName)) {
       throw new AuthorizationError(
         `Forbidden: One of the following roles required: ${requiredRoles.join(", ")}.`
       );
     }
-
     return next();
   } catch (error) {
     if (error instanceof AuthorizationError) {
       throw error;
     }
-    throw new DatabaseError(`Database query failed: ${error.message}`);
+    if (error instanceof DatabaseError) {
+      throw new DatabaseError(`Database query failed: ${error.message}`);
+    }
+    throw error;
   }
 });
 
 const timingMiddleware = t.middleware(async ({ next, path }) => {
   const start = Date.now();
   if (t._config.isDev) {
-    const waitMs = Math.floor(Math.random() * 400) + 100; 
+    const waitMs = Math.floor(Math.random() * 400) + 100;
     await new Promise((resolve) => setTimeout(resolve, waitMs));
   }
   const result = await next();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import {useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -9,69 +9,72 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import { Textarea } from "../ui/textarea";
 
 interface BrandFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: { name: string; description: string }) => void;
-  initialData?: { name: string; description: string };
-  mode?: "create" | "edit";
 }
 
-export function BrandForm({ isOpen, onClose, onSubmit, initialData, mode = "create" }: BrandFormProps) {
-  const [formData, setFormData] = useState({
-    name: initialData?.name || "",
-    description: initialData?.description || "",
-  });
+const formSchema = z.object({
+  brand_name: z.string(),
+  brand_description: z.string()
+})
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
-    setFormData({ name: "", description: "" });
+type FormValues = z.infer<typeof formSchema>
+
+export function BrandForm({ isOpen, onClose, onSubmit }: BrandFormProps) {
+
+  const handleSubmit = (branddata:FormValues) => {
+    onSubmit({name: branddata.brand_name, description:branddata.brand_description});
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      brand_name: "",
+      brand_description: ""
+    }
+  })
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{mode === "create" ? "Add New Brand" : "Edit Brand"}</DialogTitle>
+          <DialogTitle>Add New Brand</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="description">Description</Label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            />
-          </div>
-          <div className="flex justify-end">
-          <Button type="submit">
-            {mode === "create" ? "Create Brand" : "Update Brand"}
-          </Button>
-          </div>
-        </form>
+        <Form {...form} >
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <div>
+              <FormField control={form.control} name="brand_name" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter the brand name" {...field} />
+                  </FormControl>
+                </FormItem>
+              )} />
+
+              <FormField control={form.control} name="brand_description" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Brand Description</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Enter the brand description" {...field} />
+                  </FormControl>
+                </FormItem>
+              )} />
+            </div>
+            <div className="flex justify-end">
+              <Button type="submit">
+                Create Brand
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
