@@ -42,6 +42,7 @@ const formSchema = z.object({
   brand_id: z.string({
     required_error: "Please select a brand.",
   }),
+  unit_price: z.number().min(0, { message: "The unit price cannot be less than 0" })
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -54,6 +55,7 @@ interface CatalogueFormProps {
     part_number: string;
     category_id: string;
     brand_id: string;
+    unit_price: number;
   };
 }
 
@@ -65,6 +67,7 @@ export default function CatalogueForm({ closeDialog, initialData }: CatalogueFor
       part_number: initialData?.part_number ?? "",
       category_id: initialData?.category_id ?? "",
       brand_id: initialData?.brand_id ?? "",
+      unit_price: initialData?.unit_price ?? 0,
     },
   });
 
@@ -190,6 +193,20 @@ export default function CatalogueForm({ closeDialog, initialData }: CatalogueFor
                       ))}
                     </SelectContent>
                   </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="unit_price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Unit Price</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter unit price" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

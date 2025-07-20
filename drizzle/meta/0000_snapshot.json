@@ -1,5 +1,5 @@
 {
-  "id": "17189da0-a463-40fc-8f27-850ad6426ed4",
+  "id": "461a6c5f-7a34-4dee-994d-56ef260326d5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -227,6 +227,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "unit_price": {
+          "name": "unit_price",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
         "created_by": {
           "name": "created_by",
           "type": "varchar(255)",
@@ -413,11 +419,53 @@
           "primaryKey": true,
           "notNull": true
         },
+        "invoice_number": {
+          "name": "invoice_number",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
         "payment_mode": {
           "name": "payment_mode",
           "type": "varchar(50)",
           "primaryKey": false,
+          "notNull": true
+        },
+        "journal_number": {
+          "name": "journal_number",
+          "type": "varchar(50)",
+          "primaryKey": false,
           "notNull": false
+        },
+        "customer_phone_num": {
+          "name": "customer_phone_num",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_name": {
+          "name": "customer_name",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "customer_cid": {
+          "name": "customer_cid",
+          "type": "varchar(11)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "payment_status": {
+          "name": "payment_status",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_discount": {
+          "name": "total_discount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
         },
         "total_sale": {
           "name": "total_sale",
@@ -511,6 +559,12 @@
         "quantity": {
           "name": "quantity",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "discount": {
+          "name": "discount",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": true
         },
@@ -968,7 +1022,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "restrict",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "tbl_unit_price_created_by_tbl_user_id_fk": {
@@ -1027,18 +1081,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "created_by": {
-          "name": "created_by",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "updated_by": {
-          "name": "updated_by",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -1054,34 +1096,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "tbl_user_role_created_by_tbl_user_id_fk": {
-          "name": "tbl_user_role_created_by_tbl_user_id_fk",
-          "tableFrom": "tbl_user_role",
-          "tableTo": "tbl_user",
-          "columnsFrom": [
-            "created_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "tbl_user_role_updated_by_tbl_user_id_fk": {
-          "name": "tbl_user_role_updated_by_tbl_user_id_fk",
-          "tableFrom": "tbl_user_role",
-          "tableTo": "tbl_user",
-          "columnsFrom": [
-            "updated_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -1101,12 +1116,6 @@
         "name": {
           "name": "name",
           "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "password": {
-          "name": "password",
-          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
@@ -1131,18 +1140,6 @@
         "roleId": {
           "name": "roleId",
           "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_by": {
-          "name": "created_by",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "updated_by": {
-          "name": "updated_by",
-          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
         },
@@ -1174,32 +1171,6 @@
           ],
           "onDelete": "set null",
           "onUpdate": "set null"
-        },
-        "tbl_user_created_by_tbl_user_id_fk": {
-          "name": "tbl_user_created_by_tbl_user_id_fk",
-          "tableFrom": "tbl_user",
-          "tableTo": "tbl_user",
-          "columnsFrom": [
-            "created_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "tbl_user_updated_by_tbl_user_id_fk": {
-          "name": "tbl_user_updated_by_tbl_user_id_fk",
-          "tableFrom": "tbl_user",
-          "tableTo": "tbl_user",
-          "columnsFrom": [
-            "updated_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},

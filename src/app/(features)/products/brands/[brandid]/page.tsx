@@ -1,52 +1,84 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Button } from "~/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { Form, FormControl, FormField, FormItem, FormLabel } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
+import { useParams } from "next/navigation";
+import { api } from "~/trpc/react";
+import { useEffect } from "react";
+import { Button } from "~/components/ui/button";
+
+const formSchema = z.object({
+  brand_name: z.string(),
+  brand_description: z.string()
+});
+
+type FormSchema = z.infer<typeof formSchema>;
 
 export default function Page() {
-  const [formData, setFormData] = useState({
-    name: "",
-    description:  "",
+  const params = useParams<{ brandid: string }>();
+  const { data } = api.carBrandRoutes.getCarBrandById.useQuery(params.brandid);
+
+  const form = useForm<FormSchema>({
+    defaultValues: {
+      brand_name: "",
+      brand_description: "",
+    },
+    resolver: zodResolver(formSchema)
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  useEffect(() => {
+    if (data && data.length > 0) {
+      const brand = data[0];
+      form.reset({
+        brand_name: brand?.brand_name || "",
+        brand_description: brand?.brand_desc || ""
+      });
+    }
+  }, [data, form]);
+
+  const handleUpdate = (updateData:FormSchema) => {
+    console.log(updateData)
+  }
 
   return (
-    <div className="p-10">
-        <form className="space-y-4">
-          <div>
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="description">Description</Label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            />
-          </div>
+    <div className="py-10 px-10">
+      <Form {...form}>
+        <form className="space-y-4" onSubmit={form.handleSubmit(handleUpdate)}>
+          <FormField
+            control={form.control}
+            name="brand_name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Brand Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="brand_description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Brand Description</FormLabel>
+                <FormControl>
+                  <Input {...field}/>
+                </FormControl>
+              </FormItem>
+            )}
+          />
           <div className="flex justify-end">
-          <Button type="submit">
-           Update Brand
-          </Button>
+            <Button type="submit">
+              Update Brand
+            </Button>
           </div>
         </form>
+      </Form>
     </div>
   );
 }

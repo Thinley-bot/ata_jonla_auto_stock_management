@@ -14,6 +14,7 @@ export const stockSaleDetails = (
                 part_id: partId,
                 quantity: Math.floor(Math.random() * 10) + 1,
                 sub_total: (Math.random() * 100).toFixed(2),
+                discount: Math.floor(Math.random() * 10) + 1,
                 createdBy: adminUserId,
                 updatedBy: adminUserId,
             });

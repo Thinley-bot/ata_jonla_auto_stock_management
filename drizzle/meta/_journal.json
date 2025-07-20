@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1740136676620,
-      "tag": "0000_new_living_mummy",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1740151804337,
-      "tag": "0001_useful_stranger",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1740152462227,
-      "tag": "0002_smart_jack_power",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1744641028816,
-      "tag": "0003_stormy_silk_fever",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1744643673026,
-      "tag": "0004_moaning_dust",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1745564001143,
-      "tag": "0005_neat_champions",
+      "when": 1752905865165,
+      "tag": "0000_large_skin",
       "breakpoints": true
     }
   ]

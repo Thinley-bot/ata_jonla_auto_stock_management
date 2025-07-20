@@ -23,7 +23,7 @@ const { Pool } = pg;
 
 // Database connection
 const pool = new Pool({
-    connectionString: "postgresql://postgres:T_JfnKDJ1Rw6nsLN@192.168.162.127:5432/auto_parts_stock_management"
+    connectionString: "postgresql://postgres:T_JfnKDJ1Rw6nsLN@192.168.108.30:5432/auto_parts_stock_management"
 });
 const db = drizzle(pool);
 
@@ -90,3 +90,4 @@ export async function Seed() {
         process.exit(0);
     }
 }
+

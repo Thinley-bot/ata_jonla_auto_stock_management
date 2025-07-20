@@ -1,1 +1,0 @@
-ALTER TABLE "tbl_stock_sale" ADD COLUMN "customer_phone_num" varchar(50);

@@ -8,6 +8,7 @@ export const parts =(adminUserId : string | undefined, categoryId :string | unde
         part_number: "EO12345",
         category_id: categoryId,
         brand_id: brandId,
+        unit_price:"50",
         createdBy: adminUserId,
         updatedBy : adminUserId
     },
@@ -17,6 +18,7 @@ export const parts =(adminUserId : string | undefined, categoryId :string | unde
         part_number: "BP67890",
         category_id: categoryId,
         brand_id: brandId,
+        unit_price:"50",
         createdBy: adminUserId,
         updatedBy : adminUserId
     },

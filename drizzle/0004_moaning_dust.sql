@@ -1,1 +1,0 @@
-ALTER TABLE "tbl_stock_sale_detail" DROP COLUMN "price";

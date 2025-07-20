@@ -31,6 +31,7 @@ CREATE TABLE "tbl_part_catalogue" (
 	"part_number" varchar(255) NOT NULL,
 	"category_id" varchar NOT NULL,
 	"brand_id" varchar NOT NULL,
+	"unit_price" numeric(10, 2) NOT NULL,
 	"created_by" varchar(255) NOT NULL,
 	"updated_by" varchar(255),
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -50,7 +51,14 @@ CREATE TABLE "tbl_part_category" (
 --> statement-breakpoint
 CREATE TABLE "tbl_stock_sale" (
 	"id" varchar(255) PRIMARY KEY NOT NULL,
-	"payment_mode" varchar(50),
+	"invoice_number" varchar(50) NOT NULL,
+	"payment_mode" varchar(50) NOT NULL,
+	"journal_number" varchar(50),
+	"customer_phone_num" varchar(50) NOT NULL,
+	"customer_name" varchar(50),
+	"customer_cid" varchar(11),
+	"payment_status" varchar(50),
+	"total_discount" numeric(10, 2) NOT NULL,
 	"total_sale" numeric(10, 2) NOT NULL,
 	"created_by" varchar(255) NOT NULL,
 	"updated_by" varchar(255),
@@ -63,6 +71,7 @@ CREATE TABLE "tbl_stock_sale_detail" (
 	"sale_id" varchar,
 	"part_id" varchar,
 	"quantity" integer NOT NULL,
+	"discount" numeric(10, 2) NOT NULL,
 	"sub_total" numeric(10, 2) NOT NULL,
 	"created_by" varchar(255) NOT NULL,
 	"updated_by" varchar(255),
@@ -120,8 +129,6 @@ CREATE TABLE "tbl_user_role" (
 	"id" varchar(255) PRIMARY KEY NOT NULL,
 	"role_name" "roles",
 	"role_description" varchar(255) NOT NULL,
-	"created_by" varchar NOT NULL,
-	"updated_by" varchar,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp
 );
@@ -129,13 +136,10 @@ CREATE TABLE "tbl_user_role" (
 CREATE TABLE "tbl_user" (
 	"id" varchar(255) PRIMARY KEY NOT NULL,
 	"name" varchar(255),
-	"password" varchar,
 	"email" varchar NOT NULL,
 	"email_verified" boolean,
 	"image" text,
-	"roleId" varchar NOT NULL,
-	"created_by" varchar(255) NOT NULL,
-	"updated_by" varchar(255),
+	"roleId" varchar,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp
 );
@@ -171,11 +175,7 @@ ALTER TABLE "tbl_stock" ADD CONSTRAINT "tbl_stock_created_by_tbl_user_id_fk" FOR
 ALTER TABLE "tbl_stock" ADD CONSTRAINT "tbl_stock_updated_by_tbl_user_id_fk" FOREIGN KEY ("updated_by") REFERENCES "public"."tbl_user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tbl_supplier" ADD CONSTRAINT "tbl_supplier_created_by_tbl_user_id_fk" FOREIGN KEY ("created_by") REFERENCES "public"."tbl_user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tbl_supplier" ADD CONSTRAINT "tbl_supplier_updated_by_tbl_user_id_fk" FOREIGN KEY ("updated_by") REFERENCES "public"."tbl_user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "tbl_unit_price" ADD CONSTRAINT "tbl_unit_price_part_id_tbl_part_catalogue_id_fk" FOREIGN KEY ("part_id") REFERENCES "public"."tbl_part_catalogue"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "tbl_unit_price" ADD CONSTRAINT "tbl_unit_price_part_id_tbl_part_catalogue_id_fk" FOREIGN KEY ("part_id") REFERENCES "public"."tbl_part_catalogue"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tbl_unit_price" ADD CONSTRAINT "tbl_unit_price_created_by_tbl_user_id_fk" FOREIGN KEY ("created_by") REFERENCES "public"."tbl_user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tbl_unit_price" ADD CONSTRAINT "tbl_unit_price_updated_by_tbl_user_id_fk" FOREIGN KEY ("updated_by") REFERENCES "public"."tbl_user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "tbl_user_role" ADD CONSTRAINT "tbl_user_role_created_by_tbl_user_id_fk" FOREIGN KEY ("created_by") REFERENCES "public"."tbl_user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "tbl_user_role" ADD CONSTRAINT "tbl_user_role_updated_by_tbl_user_id_fk" FOREIGN KEY ("updated_by") REFERENCES "public"."tbl_user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "tbl_user" ADD CONSTRAINT "tbl_user_roleId_tbl_user_role_id_fk" FOREIGN KEY ("roleId") REFERENCES "public"."tbl_user_role"("id") ON DELETE set null ON UPDATE set null;--> statement-breakpoint
-ALTER TABLE "tbl_user" ADD CONSTRAINT "tbl_user_created_by_tbl_user_id_fk" FOREIGN KEY ("created_by") REFERENCES "public"."tbl_user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "tbl_user" ADD CONSTRAINT "tbl_user_updated_by_tbl_user_id_fk" FOREIGN KEY ("updated_by") REFERENCES "public"."tbl_user"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "tbl_user" ADD CONSTRAINT "tbl_user_roleId_tbl_user_role_id_fk" FOREIGN KEY ("roleId") REFERENCES "public"."tbl_user_role"("id") ON DELETE set null ON UPDATE set null;

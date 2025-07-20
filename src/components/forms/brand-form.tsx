@@ -49,7 +49,7 @@ export function BrandForm({ isOpen, onClose, onSubmit }: BrandFormProps) {
         </DialogHeader>
         <Form {...form} >
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <div>
+            <div className="space-y-4">
               <FormField control={form.control} name="brand_name" render={({ field }) => (
                 <FormItem>
                   <FormLabel>Name</FormLabel>
