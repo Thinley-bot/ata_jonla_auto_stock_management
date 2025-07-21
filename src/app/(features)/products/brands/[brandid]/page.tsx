@@ -9,6 +9,7 @@ import { useParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import { useEffect } from "react";
 import { Button } from "~/components/ui/button";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   brand_name: z.string(),
@@ -20,6 +21,7 @@ type FormSchema = z.infer<typeof formSchema>;
 export default function Page() {
   const params = useParams<{ brandid: string }>();
   const { data } = api.carBrandRoutes.getCarBrandById.useQuery(params.brandid);
+  const { mutate: updateCarBrand, error } = api.carBrandRoutes.updateCarBrand.useMutation()
 
   const form = useForm<FormSchema>({
     defaultValues: {
@@ -39,8 +41,18 @@ export default function Page() {
     }
   }, [data, form]);
 
-  const handleUpdate = (updateData:FormSchema) => {
-    console.log(updateData)
+  const handleUpdate = (updateData: FormSchema) => {
+    updateCarBrand(
+      {
+        id: params.brandid,
+        updates: {brand_desc: updateData.brand_description, ...updateData}
+      },
+      {
+        onSuccess: () => {
+          toast.success("The car brand is updated successfully ")
+        }
+      }
+    )
   }
 
   return (
@@ -67,7 +79,7 @@ export default function Page() {
               <FormItem>
                 <FormLabel>Brand Description</FormLabel>
                 <FormControl>
-                  <Input {...field}/>
+                  <Input {...field} />
                 </FormControl>
               </FormItem>
             )}
