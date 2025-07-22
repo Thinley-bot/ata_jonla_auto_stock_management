@@ -48,8 +48,8 @@ export default function Page() {
         updates: {brand_desc: updateData.brand_description, ...updateData}
       },
       {
-        onSuccess: () => {
-          toast.success("The car brand is updated successfully ")
+        onSuccess: (input) => {
+          toast.success(input.message)
         }
       }
     )

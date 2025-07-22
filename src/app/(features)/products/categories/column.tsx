@@ -37,7 +37,7 @@ export const columns: ColumnDef<Category>[] = [
     header: "Created At",
     cell: ({ row }) => {
       const date = row.getValue("createdAt") as Date;
-      return format(date, "PPpp");
+      return date.toLocaleDateString();
     },
   },
   {
@@ -45,7 +45,7 @@ export const columns: ColumnDef<Category>[] = [
     header: "Updated At",
     cell: ({ row }) => {
       const date = row.getValue("updatedAt") as Date | null;
-      return date ? format(date, "PPpp") : "-";
+      return  date === null ? "" : date.toLocaleDateString() ;
     },
   },
   {
@@ -57,7 +57,6 @@ export const columns: ColumnDef<Category>[] = [
         <ActionCell
           itemId={categoryId}
           item="category"
-          onEdit={() => meta?.onEdit?.(row.original)}
         />
       );
     },

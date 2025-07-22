@@ -33,6 +33,14 @@ export const columns: ColumnDef<Brand>[] = [
       return new Date(date).toLocaleDateString();
     },
   },
+    {
+    accessorKey: "updatedAt",
+    header: "Updated At",
+    cell: ({ row }) => {
+      const date = row.getValue("updatedAt") as Date;
+      return new Date(date).toLocaleDateString();
+    },
+  },
   {
     id: "actions",
     header: "Actions",

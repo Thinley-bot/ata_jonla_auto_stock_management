@@ -40,6 +40,7 @@ export default function CarBrandsPage() {
     name: brand.brand_name,
     description: brand.brand_desc,
     createdAt: brand.createdAt,
+    updatedAt: brand.updatedAt
   })) || [];
 
   return (
