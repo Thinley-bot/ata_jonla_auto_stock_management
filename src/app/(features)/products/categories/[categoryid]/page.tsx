@@ -1,9 +1,13 @@
+"use client"
+
 import React from 'react'
+import { useParams } from 'next/navigation'
 
 const page = () => {
+  const {categoryid}= useParams<{categoryid:string}>()
   return (
-    <div>page</div>
+    <div></div>
   )
 }
 
-export default page
+export default page;

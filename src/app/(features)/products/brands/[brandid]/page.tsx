@@ -10,17 +10,13 @@ import { api } from "~/trpc/react";
 import { useEffect } from "react";
 import { Button } from "~/components/ui/button";
 import toast from "react-hot-toast";
-
-const formSchema = z.object({
-  brand_name: z.string(),
-  brand_description: z.string()
-});
+import { formSchema } from "~/components/forms/brand-form";
 
 type FormSchema = z.infer<typeof formSchema>;
 
 export default function Page() {
-  const params = useParams<{ brandid: string }>();
-  const { data } = api.carBrandRoutes.getCarBrandById.useQuery(params.brandid);
+  const {brandid} = useParams<{ brandid: string }>();
+  const { data } = api.carBrandRoutes.getCarBrandById.useQuery(brandid);
   const { mutate: updateCarBrand, error } = api.carBrandRoutes.updateCarBrand.useMutation()
 
   const form = useForm<FormSchema>({
@@ -44,7 +40,7 @@ export default function Page() {
   const handleUpdate = (updateData: FormSchema) => {
     updateCarBrand(
       {
-        id: params.brandid,
+        id: brandid,
         updates: {brand_desc: updateData.brand_description, ...updateData}
       },
       {

@@ -80,8 +80,13 @@ const ActionCell = ({ item, itemId, data }: ActionCellProps) => {
     };
 
     const handleView = () => {
-        if(pathname === "/products/brands"){
-            router.push(`/products/brands/${itemId}`)
+        switch(item){
+            case "brand":
+                 router.push(`/products/brands/${itemId}`)
+                 break;
+            case "category":
+                router.push(`/products/categories/${itemId}`)
+                break;
         }
     }
 

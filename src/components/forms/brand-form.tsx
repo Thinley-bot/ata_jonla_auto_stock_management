@@ -20,7 +20,7 @@ interface BrandFormProps {
   onSubmit: (data: { name: string; description: string }) => void;
 }
 
-const formSchema = z.object({
+export const formSchema = z.object({
   brand_name: z.string(),
   brand_description: z.string()
 })
