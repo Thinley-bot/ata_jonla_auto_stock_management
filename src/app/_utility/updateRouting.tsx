@@ -12,5 +12,7 @@ export function updateRouting(router: AppRouterInstance, item: string, itemId: s
         case "category":
             router.push(`/products/categories/${itemId}`)
             break;
+        case "catalogue":
+            router.push(`/products/catalogue/${itemId}`)
     }
 }

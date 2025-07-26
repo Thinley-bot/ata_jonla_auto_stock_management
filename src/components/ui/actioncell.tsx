@@ -42,7 +42,8 @@ const ActionCell = ({ item, itemId}: ActionCellProps) => {
             onSuccess: () => {
                 utils.partCatalogueRoutes.getPartCatalogues.invalidate();
                 toast.success("Catalogue deleted sucessfully")
-            }
+            },
+            onError: (err) => (console.log(err)),
         }),
         supplier: api.supplierRoutes.deleteSupplier.useMutation({
             onSuccess: () => {
