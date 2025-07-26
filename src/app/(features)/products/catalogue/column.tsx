@@ -1,14 +1,6 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "~/components/ui/button";
-import { MoreVertical } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
 import ActionCell from "~/components/ui/actioncell";
 
 export type Product = {
@@ -23,12 +15,7 @@ export type Product = {
   createdAt: Date;
 };
 
-interface ColumnProps {
-  onEdit?: (item: Product) => void;
-  onDelete?: (id: string) => void;
-}
-
-export const createColumns = (props: ColumnProps): ColumnDef<Product>[] => [
+export const columns : ColumnDef<Product>[] = [
   {
     header: "ID",
     cell: ({row}) => (
@@ -38,10 +25,6 @@ export const createColumns = (props: ColumnProps): ColumnDef<Product>[] => [
   {
     accessorKey: "name",
     header: "Name",
-  },
-  {
-    accessorKey: "sku",
-    header: "SKU",
   },
   {
     accessorKey: "category",
@@ -79,8 +62,8 @@ export const createColumns = (props: ColumnProps): ColumnDef<Product>[] => [
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const brandId = row.original.id;
-      return <ActionCell itemId={brandId} item="catalogue"/>;
+      const itemId = row.original.id;
+      return <ActionCell item="catalogue" itemId={itemId}/>;
     },
   },
 ]; 

@@ -85,7 +85,6 @@ export const partCatalogueRouter = createTRPCRouter({
         if (!isPartExist) {
             return { success: false, message: "The part doesn't exist" };
         }
-
         try {
             await deletePartCatalogue(input.id);
             return { success: true, message: "Part successfully deleted" };

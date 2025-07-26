@@ -56,8 +56,8 @@ export default function CarBrandsPage() {
           />
         </div>
        <Button onClick={() => setIsOpen(true)}>
-          <CirclePlus className="mr-2 h-4 w-4" />
-          Add New Brand
+          <CirclePlus className="h-4 w-4" />
+          Brand
         </Button>
       </div>
       <DataTable

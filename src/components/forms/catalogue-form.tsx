@@ -48,26 +48,19 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface CatalogueFormProps {
-  closeDialog: () => void;
-  initialData?: {
-    id: string;
-    part_name: string;
-    part_number: string;
-    category_id: string;
-    brand_id: string;
-    unit_price: number;
-  };
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export default function CatalogueForm({ closeDialog, initialData }: CatalogueFormProps) {
+export default function CatalogueForm({ isOpen , onClose }: CatalogueFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      part_name: initialData?.part_name ?? "",
-      part_number: initialData?.part_number ?? "",
-      category_id: initialData?.category_id ?? "",
-      brand_id: initialData?.brand_id ?? "",
-      unit_price: initialData?.unit_price ?? 0,
+      part_name: "",
+      part_number: "",
+      category_id: "",
+      brand_id: "",
+      unit_price: 0,
     },
   });
 
@@ -83,7 +76,7 @@ export default function CatalogueForm({ closeDialog, initialData }: CatalogueFor
     onSuccess: () => {
       toast.success("Part catalogue created successfully");
       utils.partCatalogueRoutes.getPartCatalogues.invalidate();
-      closeDialog();
+      onClose();
     },
     onError: (error) => {
       toast.error(error.message);
@@ -94,7 +87,7 @@ export default function CatalogueForm({ closeDialog, initialData }: CatalogueFor
     onSuccess: () => {
       toast.success("Part catalogue updated successfully");
       utils.partCatalogueRoutes.getPartCatalogues.invalidate();
-      closeDialog();
+      onClose();
     },
     onError: (error) => {
       toast.error(error.message);
@@ -102,21 +95,14 @@ export default function CatalogueForm({ closeDialog, initialData }: CatalogueFor
   });
 
   function onSubmit(data: FormValues) {
-    if (initialData) {
-      updateMutation.mutate({
-        id: initialData.id,
-        updates: data,
-      });
-    } else {
-      createMutation.mutate(data);
-    }
+    createMutation.mutate(data);
   }
 
   return (
-    <Dialog open onOpenChange={closeDialog}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{initialData ? "Edit Part" : "Add New Part"}</DialogTitle>
+          <DialogTitle>Add New Part</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -213,11 +199,11 @@ export default function CatalogueForm({ closeDialog, initialData }: CatalogueFor
             />
 
             <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={closeDialog}>
+              <Button type="button" variant="destructive" onClick={onClose}>
                 Cancel
               </Button>
               <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
-                {initialData ? "Update" : "Create"}
+                Create
               </Button>
             </div>
           </form>

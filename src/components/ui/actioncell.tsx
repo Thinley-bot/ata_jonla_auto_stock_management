@@ -18,7 +18,7 @@ interface ActionCellProps {
     data?: any;
 }
 
-const ActionCell = ({ item, itemId, data }: ActionCellProps) => {
+const ActionCell = ({ item, itemId}: ActionCellProps) => {
     const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false);
     const utils = api.useUtils();
     const router = useRouter();

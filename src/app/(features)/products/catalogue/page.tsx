@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { api } from "~/trpc/react";
-import { createColumns } from "./column";
+import { columns } from "./column";
 import { DataTable } from "./data_table";
 import CatalogueForm from "~/components/forms/catalogue-form";
 import { Button } from "~/components/ui/button";
@@ -12,13 +12,6 @@ import { Input } from "~/components/ui/input";
 export default function ProductCataloguePage() {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCatalogue, setSelectedCatalogue] = useState<{
-    id: string;
-    part_name: string;
-    part_number: string;
-    category_id: string;
-    brand_id: string;
-  } | null>(null);
 
   const { data: catalogueResponse, isLoading } = api.partCatalogueRoutes.getPartCatalogues.useQuery();
   const deleteMutation = api.partCatalogueRoutes.deletePartCatalogue.useMutation({
@@ -32,29 +25,6 @@ export default function ProductCataloguePage() {
   });
 
   const utils = api.useUtils();
-
-  const handleEdit = (catalogue: {
-    id: string;
-    name: string;
-    sku: string;
-    category: string;
-    brand: string;
-  }) => {
-    setSelectedCatalogue({
-      id: catalogue.id,
-      part_name: catalogue.name,
-      part_number: catalogue.sku,
-      category_id: catalogue.category,
-      brand_id: catalogue.brand,
-    });
-    setIsOpen(true);
-  };
-
-  const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this part catalogue?")) {
-      await deleteMutation.mutateAsync({ id });
-    }
-  };
 
   const formattedData = (() => {
     if (!catalogueResponse || !catalogueResponse.success) return [];
@@ -82,12 +52,6 @@ export default function ProductCataloguePage() {
     return [];
   })();
 
-  // Create columns with the action column logic now in column.tsx
-  const columns = createColumns({
-    onEdit: handleEdit,
-    onDelete: handleDelete,
-  });
-
   return (
     <div className="container px-4 py-5">
       <div className="flex items-center justify-between mb-2">
@@ -101,8 +65,8 @@ export default function ProductCataloguePage() {
           />
         </div>
         <Button onClick={() => setIsOpen(true)}>
-          <CirclePlus className="mr-2 h-4 w-4" />
-          Add New Part
+          <CirclePlus className="h-4 w-4" />
+          Part
         </Button>
       </div>
       
@@ -112,15 +76,10 @@ export default function ProductCataloguePage() {
         isLoading={isLoading}
       />
 
-      {isOpen && (
         <CatalogueForm 
-          closeDialog={() => {
-            setIsOpen(false);
-            setSelectedCatalogue(null);
-          }}
-          initialData={selectedCatalogue || undefined}
+          isOpen = {isOpen}
+          onClose = {()=>setIsOpen(false)}
         />
-      )}
     </div>
   );
 }

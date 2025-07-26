@@ -1,6 +1,6 @@
 "use client";
 
-import {useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -24,8 +24,8 @@ type FormValues = z.infer<typeof formSchema>
 
 export function BrandForm({ isOpen, onClose, onSubmit }: BrandFormProps) {
 
-  const handleSubmit = (branddata:FormValues) => {
-    onSubmit({name: branddata.brand_name, description:branddata.brand_description});
+  const handleSubmit = (branddata: FormValues) => {
+    onSubmit({ name: branddata.brand_name, description: branddata.brand_description });
   };
 
   const form = useForm({
@@ -63,10 +63,13 @@ export function BrandForm({ isOpen, onClose, onSubmit }: BrandFormProps) {
                 </FormItem>
               )} />
             </div>
-            <div className="flex justify-end">
-              <Button type="submit">
-                Create Brand
-              </Button>
+            <div className="flex justify-end gap-3">
+                <Button type="button" variant={"destructive"} onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button type="submit" variant={"default"}>
+                  Create
+                </Button>
             </div>
           </form>
         </Form>

@@ -44,8 +44,8 @@ export default function Page() {
           />
         </div>
         <Button onClick={() => setShowAddModal(true)}>
-          <CirclePlus className="mr-2 h-4 w-4" />
-          Add Category
+          <CirclePlus className="h-4 w-4" />
+          Category
         </Button>
       </div>
       <div className="mt-2">
