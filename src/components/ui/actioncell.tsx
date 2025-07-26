@@ -9,8 +9,8 @@ import { Ellipsis } from 'lucide-react';
 import { api } from '~/trpc/react';
 import ConfirmDelete from './confirmdelete';
 import { toast } from 'sonner';
-import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation'
+import { updateRouting } from '~/app/_utility/updateRouting';
 
 interface ActionCellProps {
     item: 'user' | 'category' | 'catalogue' | 'supplier' | 'stock' | 'sale' | 'brand';
@@ -21,7 +21,6 @@ interface ActionCellProps {
 const ActionCell = ({ item, itemId, data }: ActionCellProps) => {
     const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false);
     const utils = api.useUtils();
-    const pathname = usePathname();
     const router = useRouter();
 
     const mutations = {
@@ -80,14 +79,7 @@ const ActionCell = ({ item, itemId, data }: ActionCellProps) => {
     };
 
     const handleView = () => {
-        switch(item){
-            case "brand":
-                 router.push(`/products/brands/${itemId}`)
-                 break;
-            case "category":
-                router.push(`/products/categories/${itemId}`)
-                break;
-        }
+        updateRouting(router, item, itemId)
     }
 
     return (

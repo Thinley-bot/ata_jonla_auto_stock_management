@@ -10,7 +10,7 @@ import { api } from "~/trpc/react";
 import { useEffect } from "react";
 import { Button } from "~/components/ui/button";
 import toast from "react-hot-toast";
-import { formSchema } from "~/components/forms/brand-form";
+import { formSchema } from "~/form_schema/brand-schema";
 
 type FormSchema = z.infer<typeof formSchema>;
 
@@ -41,7 +41,7 @@ export default function Page() {
     updateCarBrand(
       {
         id: brandid,
-        updates: {brand_desc: updateData.brand_description, ...updateData}
+        updates: {brand_desc: updateData.brand_description,...updateData}
       },
       {
         onSuccess: (input) => {
@@ -82,7 +82,7 @@ export default function Page() {
           />
           <div className="flex justify-end">
             <Button type="submit">
-              Update Brand
+              Update
             </Button>
           </div>
         </form>

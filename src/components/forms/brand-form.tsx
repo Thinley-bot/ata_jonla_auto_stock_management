@@ -13,18 +13,13 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { Textarea } from "../ui/textarea";
+import { formSchema } from "~/form_schema/brand-schema";
 
 interface BrandFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: { name: string; description: string }) => void;
 }
-
-export const formSchema = z.object({
-  brand_name: z.string(),
-  brand_description: z.string()
-})
-
 type FormValues = z.infer<typeof formSchema>
 
 export function BrandForm({ isOpen, onClose, onSubmit }: BrandFormProps) {
@@ -79,3 +74,5 @@ export function BrandForm({ isOpen, onClose, onSubmit }: BrandFormProps) {
     </Dialog>
   );
 }
+export { formSchema };
+
