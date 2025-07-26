@@ -33,14 +33,14 @@ export default function ProductCataloguePage() {
       return catalogueResponse.data
         .filter((item) => 
           item.part_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.part_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.part_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.part_category?.category_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.car_brand?.brand_name.toLowerCase().includes(searchQuery.toLowerCase())
         )
         .map((item) => ({
           id: item.id,
           name: item.part_name,
-          sku: item.part_number,
+          partnumber: item.part_number || "N/A",
           category: item.part_category?.category_name || "N/A",
           brand: item.car_brand?.brand_name || "N/A",
           price: 0,

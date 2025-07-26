@@ -35,7 +35,7 @@ export const partCatalogueRouter = createTRPCRouter({
     createPartCatalogue: managerProcedure.input(
         z.object({
             part_name: z.string(),
-            part_number: z.string(),
+            part_number: z.string().optional(),
             category_id: z.string(),
             brand_id: z.string(),
             unit_price: z.number()

@@ -6,7 +6,7 @@ import ActionCell from "~/components/ui/actioncell";
 export type Product = {
   id: string;
   name: string;
-  sku: string;
+  partnumber: string;
   category: string;
   brand: string;
   price: number;
@@ -25,6 +25,10 @@ export const columns : ColumnDef<Product>[] = [
   {
     accessorKey: "name",
     header: "Name",
+  },
+    {
+    accessorKey: "partnumber",
+    header: "Part Number",
   },
   {
     accessorKey: "category",

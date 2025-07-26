@@ -10,7 +10,7 @@ import { users } from "./users";
 export const part_catalogue = createTable("part_catalogue", {
     id: varchar("id", { length: 255 }).notNull().primaryKey().$defaultFn(() => randomUUID()),
     part_name: varchar("part_name", { length: 255 }).notNull(),
-    part_number: varchar("part_number", { length: 255 }).notNull(),
+    part_number: varchar("part_number", { length: 255 }),
     category_id: varchar("category_id").notNull().references(() => part_category.id, { onDelete: "restrict" }),
     brand_id: varchar("brand_id").notNull().references(() => car_brand.id, { onDelete: "restrict" }),
     unit_price: numeric("unit_price",  { precision: 10, scale: 2 }).notNull().$type<Number>(),
