@@ -10,9 +10,9 @@ import { api } from "~/trpc/react";
 import { useEffect } from "react";
 import { Button } from "~/components/ui/button";
 import toast from "react-hot-toast";
-import { formSchema } from "~/form_schema/brand-schema";
+import { brandFormSchema } from "~/form_schema/brand-schema";
 
-type FormSchema = z.infer<typeof formSchema>;
+type FormSchema = z.infer<typeof brandFormSchema>;
 
 export default function Page() {
   const {brandid} = useParams<{ brandid: string }>();
@@ -24,7 +24,7 @@ export default function Page() {
       brand_name: "",
       brand_description: "",
     },
-    resolver: zodResolver(formSchema)
+    resolver: zodResolver(brandFormSchema)
   });
 
   useEffect(() => {

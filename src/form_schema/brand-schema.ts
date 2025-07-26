@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const formSchema = z.object({
+export const brandFormSchema = z.object({
   brand_name: z.string(),
   brand_description: z.string()
 })
