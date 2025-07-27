@@ -14,6 +14,9 @@ export default function ProductCataloguePage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: catalogueResponse, isLoading } = api.partCatalogueRoutes.getPartCatalogues.useQuery();
+  console.log("xxxx", catalogueResponse)
+  const utils = api.useUtils();
+  
   const deleteMutation = api.partCatalogueRoutes.deletePartCatalogue.useMutation({
     onSuccess: () => {
       toast.success("Part catalogue deleted successfully");
@@ -23,8 +26,6 @@ export default function ProductCataloguePage() {
       toast.error(error.message);
     },
   });
-
-  const utils = api.useUtils();
 
   const formattedData = (() => {
     if (!catalogueResponse || !catalogueResponse.success) return [];
@@ -43,7 +44,7 @@ export default function ProductCataloguePage() {
           partnumber: item.part_number || "N/A",
           category: item.part_category?.category_name || "N/A",
           brand: item.car_brand?.brand_name || "N/A",
-          price: item.unit_price || 0,
+          price: +item.unit_price || 0,
           createdAt: item.createdAt,
         }));
     }

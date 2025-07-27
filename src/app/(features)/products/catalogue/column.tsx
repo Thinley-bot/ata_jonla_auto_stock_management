@@ -1,6 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table";
+import { n } from "node_modules/better-auth/dist/auth-BBnJHOLM";
 import ActionCell from "~/components/ui/actioncell";
 
 export type Product = {
@@ -9,7 +10,7 @@ export type Product = {
   partnumber: string;
   category: string;
   brand: string;
-  price: Number;
+  price: number;
   createdAt: Date;
 };
 
@@ -56,4 +57,4 @@ export const columns : ColumnDef<Product>[] = [
       return <ActionCell item="catalogue" itemId={itemId}/>;
     },
   },
-]; 
+];

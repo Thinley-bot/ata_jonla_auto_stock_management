@@ -19,8 +19,6 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   isLoading: boolean
-  onEdit?: (item: TData) => void
-  onDelete?: (id: string) => void
 }
 
 export function DataTable<TData, TValue>({ 
