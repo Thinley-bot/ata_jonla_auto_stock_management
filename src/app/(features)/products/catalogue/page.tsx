@@ -43,9 +43,7 @@ export default function ProductCataloguePage() {
           partnumber: item.part_number || "N/A",
           category: item.part_category?.category_name || "N/A",
           brand: item.car_brand?.brand_name || "N/A",
-          price: 0,
-          stock: 0,
-          reorderLevel: 0,
+          price: item.unit_price || 0,
           createdAt: item.createdAt,
         }));
     }

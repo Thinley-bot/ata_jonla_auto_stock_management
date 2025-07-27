@@ -9,9 +9,7 @@ export type Product = {
   partnumber: string;
   category: string;
   brand: string;
-  price: number;
-  stock: number;
-  reorderLevel: number;
+  price: Number;
   createdAt: Date;
 };
 
@@ -40,19 +38,7 @@ export const columns : ColumnDef<Product>[] = [
   },
   {
     accessorKey: "price",
-    header: "Price",
-    cell: ({ row }) => {
-      const price = row.getValue("price") as number;
-      return `$${price.toFixed(2)}`;
-    },
-  },
-  {
-    accessorKey: "stock",
-    header: "Stock",
-  },
-  {
-    accessorKey: "reorderLevel",
-    header: "Reorder Level",
+    header: "Unit Price (Nu)"
   },
   {
     accessorKey: "createdAt",

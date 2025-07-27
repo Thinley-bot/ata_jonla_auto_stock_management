@@ -11,5 +11,5 @@ export const catalogueFormSchema = z.object({
   brand_id: z.string({
     required_error: "Please select a brand.",
   }),
-  unit_price: z.number().min(0, { message: "The unit price cannot be less than 0" })
+  unit_price: z.coerce.number().min(0, { message: "The unit price cannot be less than 0" })
 });
