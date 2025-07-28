@@ -20,17 +20,7 @@ export const partCatalogueRouter = createTRPCRouter({
         }
     }),
 
-    getPartCatalogue: publicProcedure.input(z.string()).query(async ({ input }) => {
-        try {
-            const part = await getPartCatalogue(input);
-            if (!part) {
-                return { success: false, message: "Part not found" };
-            }
-            return { success: true, data: part, message: "Part retrieved successfully" };
-        } catch (error) {
-            return handleError(error, "Failed to retrieve part");
-        }
-    }),
+    getPartCatalogue: publicProcedure.input(z.string()).query(async ({ input }) => await getPartCatalogue(input)),
 
     createPartCatalogue: managerProcedure.input(
         z.object({
