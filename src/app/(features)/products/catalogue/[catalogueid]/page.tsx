@@ -24,31 +24,37 @@ export default function Page() {
         },
     })
 
-    const { data: categoriesResponse } = api.partCategoryRoutes.getPartCategories.useQuery();
-    const { data: brandsResponse } = api.carBrandRoutes.getCarBrands.useQuery({});
-    const { data: catalogue } = api.partCatalogueRoutes.getPartCatalogue.useQuery(catalogueid)
+    const { data: catalogue, isLoading: isCatalogueLoading } = api.partCatalogueRoutes.getPartCatalogue.useQuery(catalogueid)
+    const { data: categoriesResponse, isLoading: isCategoriesLoading } = api.partCategoryRoutes.getPartCategories.useQuery();
+    const { data: brandsResponse, isLoading: isBrandsLoading } = api.carBrandRoutes.getCarBrands.useQuery({});
 
     const categories = categoriesResponse ?? [];
     const brands = brandsResponse ?? [];
 
-    console.log("ccccc",categories)
-    const initialCategory = categories.includes(catalogueid)
-
     useEffect(() => {
-        if (catalogue) {
+        if (catalogue && !isCategoriesLoading && !isBrandsLoading) {
             form.reset({
                 part_name: catalogue.part_name,
                 part_number: catalogue.part_number || "",
-                category_id: "",
-                brand_id: "",
-                unit_price: 0,
+                category_id: catalogue.category_id || "",
+                brand_id: catalogue.brand_id || "",
+                unit_price: +catalogue.unit_price || 0,
             })
         }
-    },[catalogue, form])
+    }, [catalogue, form, isCategoriesLoading, isBrandsLoading])
+
+    const onSubmit = (data: any) => {
+        console.log(data)
+    }
+
+    if (isCatalogueLoading || isCategoriesLoading || isBrandsLoading) {
+        return <div>Loading...</div>
+    }
+
     return (
         <div className="py-10 px-10">
             <Form {...form}>
-                <form className="space-y-4">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                     <div className='flex flex-row gap-5'>
                         <FormField
                             control={form.control}
@@ -77,7 +83,6 @@ export default function Page() {
                                 </FormItem>
                             )}
                         />
-
                     </div>
 
                     <FormField
@@ -86,14 +91,17 @@ export default function Page() {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Category</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select 
+                                    onValueChange={field.onChange} 
+                                    value={field.value}
+                                >
                                     <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a category" />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        {categories?.map((category) => (
+                                        {categories.map((category) => (
                                             <SelectItem key={category.id} value={category.id}>
                                                 {category.category_name}
                                             </SelectItem>
@@ -111,14 +119,17 @@ export default function Page() {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Brand</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select 
+                                    onValueChange={field.onChange} 
+                                    value={field.value}
+                                >
                                     <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a brand" />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        {brands?.map((brand) => (
+                                        {brands.map((brand) => (
                                             <SelectItem key={brand.id} value={brand.id}>
                                                 {brand.brand_name}
                                             </SelectItem>
@@ -137,7 +148,12 @@ export default function Page() {
                             <FormItem>
                                 <FormLabel>Unit Price</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Enter unit price" {...field} />
+                                    <Input 
+                                        placeholder="Enter unit price" 
+                                        type="number"
+                                        {...field} 
+                                        onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
