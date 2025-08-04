@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "ata_jonla_auto_stock_management Docs": {
+      "type": "sse",
+      "url": "https://gitmcp.io/Thinley-bot/ata_jonla_auto_stock_management"
+    }
+  }
+}
