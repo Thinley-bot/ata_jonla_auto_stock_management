@@ -6,14 +6,13 @@ import { randomUUID } from "crypto";
 import { accounts } from "./account";
 import { sessions } from "./session";
 import { timestamps } from "./columns/timestamp.helper";
-import { car_brand } from "./car_brand";
 import { part_catalogue } from "./part_catalogue";
 import { part_category } from "./part_category";
 import { stock_sale_detail } from "./sale_detail";
 import { stock_sale } from "./sale";
 import { stock } from "./stock";
 import { supplier } from "./supplier";
-import { unit_price } from "./unit_price";
+import { vehicle_brand } from "./vehicle_brand";
 
 export const users = createTable("user", {
   id: varchar("id", { length: 255 }).notNull().primaryKey().$defaultFn(() => randomUUID()),
@@ -32,14 +31,13 @@ export const usersRelations = relations(users, ({ one,many }) => ({
   }),
   account : many(accounts),
   session: many(sessions),
-  carBrands: many(car_brand),
+  carBrands: many(vehicle_brand),
   part_catalogue: many(part_catalogue),
   part_category:many(part_category),
   stock_sale_detail:many(stock_sale_detail),
   stock_sale:many(stock_sale),
   stock :many(stock),
   supplier : many(supplier),
-  unit_price : many(unit_price),
 }));
 
 export type NewUser = Omit<InferInsertModel<typeof users>,"id" | "emailVerified">

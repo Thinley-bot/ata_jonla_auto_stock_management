@@ -1,4 +1,3 @@
-import { varchar } from "drizzle-orm/mysql-core";
 import { timestamp } from "drizzle-orm/pg-core";
 
 export const timestamps = {

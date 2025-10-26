@@ -12,6 +12,7 @@ type UploadProps = {
   bucket: string;
   folder?: string;
 };
+
 export const uploadImage = async ({ file, bucket, folder }: UploadProps) => {
   const fileName = file.name;
   const fileExtension = fileName.slice(fileName.lastIndexOf(".") + 1);

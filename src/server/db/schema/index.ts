@@ -1,4 +1,4 @@
-export * from "./car_brand";
+export * from "./vehicle_brand";
 export * from "./account";
 export * from "./part_catalogue";
 export * from "./part_category";

@@ -1,6 +1,6 @@
 import { db } from "~/server/db";
 import { eq, like } from "drizzle-orm";
-import { car_brand, CarBrand } from "~/server/db/schema/car_brand";
+import { car_brand, CarBrand } from "~/server/db/schema/vehicle_brand";
  
 export const getCarBrandById = async (id: string) =>  
     await db.select().from(car_brand).where(eq(car_brand.id, id));
